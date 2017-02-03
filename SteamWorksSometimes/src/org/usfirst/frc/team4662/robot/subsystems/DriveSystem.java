@@ -4,10 +4,14 @@ import org.usfirst.frc.team4662.robot.RobotMap;
 import org.usfirst.frc.team4662.robot.commands.ArcadeDrive;
 import com.ctre.CANTalon;
 
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 
 /**
  *
@@ -29,6 +33,15 @@ public class DriveSystem extends Subsystem {
 	private RobotDrive steamDrive; //makes the drive
 	
 	private double m_dThrottleDirection;
+	private PIDController driveDistance;
+	
+	private double m_dWheelDiameter;
+	
+	private double m_dDriveP;
+	private double m_dDriveI;
+	private double m_dDriveD;
+	
+	private int m_iDriveError;
 	
 	public DriveSystem(){
 		
@@ -45,18 +58,31 @@ public class DriveSystem extends Subsystem {
 		ControllerLeft2.set(ControllerLeft1.getDeviceID()); //tells them who to follow
 		ControllerRight2.set(ControllerRight1.getDeviceID());
 		
+		ControllerLeft1.configNominalOutputVoltage(+0f, -0f);
+		ControllerRight1.configNominalOutputVoltage(+0f, -0f);
+		
+		ControllerLeft1.configPeakOutputVoltage(+4f, -4f);
+		ControllerRight1.configPeakOutputVoltage(+4f, -4f);
+		
 		ControllerRight1.configEncoderCodesPerRev(2048);
 		
 		ControllerLeft1.enable();
 		ControllerRight1.enable();
 		
+		
 		steamDrive = new RobotDrive(ControllerLeft1, ControllerRight1);
 		
 //		SmartDashboard.putString("DriveSytem", "ConstructorMethod");
-		
+	    
+		driveDistance = new PIDController(0.7, 0.0, 0.0, new EncoderWrapper(), new DriveDistancePID());
 		m_dThrottleDirection = 1;
 		m_bThrottleSwitch = false;
 		
+		m_dWheelDiameter = 7.75;
+		m_dDriveP = 0.7;
+		m_dDriveI = 0.0;
+		m_dDriveD = 0.0;
+		m_iDriveError = 50;
 	}
 	
 	public void ArcadeDrive(double stickX, double stickY){
@@ -92,6 +118,20 @@ public class DriveSystem extends Subsystem {
     	setDefaultCommand(new ArcadeDrive());
     }
     
+    public void initEncoder (double distance){
+    	
+    	driveDistance.reset();
+    	double rotations = distance / m_dWheelDiameter * Math.PI;
+    	ControllerRight1.setAllowableClosedLoopErr(m_iDriveError);
+    	ControllerRight1.setPosition(0.0);
+    	driveDistance.setInputRange(-rotations * 1.5, rotations * 1.5);
+    	driveDistance.setOutputRange(-1.0, 1.0);
+    	driveDistance.setAbsoluteTolerance(5.0);
+    	driveDistance.setSetpoint(rotations);
+    	driveDistance.enable();
+    	
+    }
+    
     public void logDashboard (double Y, double X){
     	
     	SmartDashboard.putNumber("DriverStickY", Y);
@@ -113,6 +153,38 @@ public class DriveSystem extends Subsystem {
     	SmartDashboard.putNumber("DriveYToggle", m_dThrottleDirection);
     }
    
+    private class EncoderWrapper implements PIDSource{
+
+		@Override
+		public void setPIDSourceType(PIDSourceType pidSource) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public PIDSourceType getPIDSourceType() {
+			// TODO Auto-generated method stub
+			return PIDSourceType.kDisplacement;
+		}
+
+		@Override
+		public double pidGet() {
+			// TODO Auto-generated method stub
+			return ControllerRight1.getPosition();
+		}
+    	
+    }
+    
+    private class DriveDistancePID implements PIDOutput{
+
+		@Override
+		public void pidWrite(double output) {
+			// TODO Auto-generated method stub
+			ArcadeDrive(0, output);
+		}
+    	
+    }
     
 }
+
+
 
