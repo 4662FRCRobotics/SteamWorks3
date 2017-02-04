@@ -41,6 +41,9 @@ public class DriveSystem extends Subsystem {
 	private double m_dDriveI;
 	private double m_dDriveD;
 	
+	private double m_dDistance;
+	private double m_dRotations;
+	
 	private int m_iDriveError;
 	
 	public DriveSystem(){
@@ -102,7 +105,7 @@ public class DriveSystem extends Subsystem {
 // then a method to return the boolean to the toggle command
 		ArcadeDrive(0,0);
 		m_bThrottleSwitch = false;
-		if ( ControllerRight1.getSpeed() > -5 && ControllerRight1.getSpeed() < 5 ) {
+		if (ControllerRight1.getSpeed() > -5 && ControllerRight1.getSpeed() < 5 ) {
 			m_dThrottleDirection = m_dThrottleDirection * -1;
 			m_bThrottleSwitch = true;
 		}
@@ -119,17 +122,46 @@ public class DriveSystem extends Subsystem {
     }
     
     public void initEncoder (double distance){
-    	
     	driveDistance.reset();
-    	double rotations = distance / m_dWheelDiameter * Math.PI;
-    	ControllerRight1.setAllowableClosedLoopErr(m_iDriveError);
+    //	m_dDistance = distance;
+    	double rotations = m_dDistance / (m_dWheelDiameter * Math.PI);
+    	driveDistance.setAbsoluteTolerance(m_iDriveError);
     	ControllerRight1.setPosition(0.0);
     	driveDistance.setInputRange(-rotations * 1.5, rotations * 1.5);
     	driveDistance.setOutputRange(-1.0, 1.0);
-    	driveDistance.setAbsoluteTolerance(5.0);
+    	driveDistance.setPID(m_dDriveP, m_dDriveI, m_dDriveD);
     	driveDistance.setSetpoint(rotations);
+    	m_dRotations = rotations;
+    	m_dRotations = 3;
     	driveDistance.enable();
-    	
+    }
+    
+    public void disableEncoder () {
+    	driveDistance.disable();
+    }
+    
+    public boolean encoderOnTarget() {
+		return driveDistance.onTarget();
+    }
+    
+    public void dashboardDisplay() {
+    	SmartDashboard.putNumber("WheelDiameter", m_dWheelDiameter);
+		SmartDashboard.putNumber("dDriveP", m_dDriveP);
+		SmartDashboard.putNumber("dDriveI", m_dDriveI);
+		SmartDashboard.putNumber("dDriveD", m_dDriveD);
+		SmartDashboard.putNumber("DriveError", m_iDriveError);
+		SmartDashboard.putNumber("Distance", m_dDistance);
+		SmartDashboard.putNumber("Rotations", m_dRotations);
+    }
+    
+    public void dashboardFetch() {
+    	m_dWheelDiameter = SmartDashboard.getNumber("WheelDiameter", m_dWheelDiameter);
+		m_dDriveP = SmartDashboard.getNumber("dDriveP", m_dDriveP);
+		m_dDriveI = SmartDashboard.getNumber("dDriveI", m_dDriveI);
+		m_dDriveD = SmartDashboard.getNumber("dDriveD", m_dDriveD);
+		m_iDriveError = (int) SmartDashboard.getNumber("DriveError", m_iDriveError);
+		m_dDistance = SmartDashboard.getNumber("Distance", m_dDistance);
+		m_dRotations = SmartDashboard.getNumber("Rotations", m_dRotations);
     }
     
     public void logDashboard (double Y, double X){
@@ -145,11 +177,8 @@ public class DriveSystem extends Subsystem {
     	
     	SmartDashboard.putNumber("Right1Temp", ControllerRight1.getTemperature());
     	SmartDashboard.putNumber("Right1Amps", ControllerRight1.getOutputCurrent());
-    	
     	SmartDashboard.putNumber("Right1Encoder", ControllerRight1.getSpeed());
-    	
     	SmartDashboard.putNumber("RightEncoderPos", ControllerRight1.getPosition());
-    	
     	SmartDashboard.putNumber("DriveYToggle", m_dThrottleDirection);
     }
    

@@ -3,6 +3,7 @@ package org.usfirst.frc.team4662.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team4662.robot.commands.*;
 
@@ -47,6 +48,8 @@ public class OI {
 		
 		ToggleFront.whenPressed(new SwitchFront());	
 		DriveDistancePID.whenPressed(new DriveDistancePID(72));
+		
+		SmartDashboard.putData("InterruptPID", new InterruptPID());
 	}
 	
 }
