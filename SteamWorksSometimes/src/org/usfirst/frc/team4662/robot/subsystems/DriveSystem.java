@@ -6,13 +6,14 @@ import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
-
+import com.kauailabs.navx.frc.*;
 /**
  *
  */
@@ -21,7 +22,8 @@ public class DriveSystem extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 	
-	
+	private AHRS navxGyro;
+	private PIDController turnToAngle;
 	
 	private CANTalon ControllerLeft1;
 	private CANTalon ControllerLeft2;
@@ -46,6 +48,15 @@ public class DriveSystem extends Subsystem {
 	
 	private int m_iDriveError;
 	
+	private double m_dGyroP;
+	private double m_dGyroI;
+	private double m_dGyroD;
+	
+	private double m_dAngle;
+	
+	private int m_iGyroError;
+	
+	
 	public DriveSystem(){
 		
 		ControllerLeft1 = new CANTalon(RobotMap.leftMotor1);
@@ -67,7 +78,7 @@ public class DriveSystem extends Subsystem {
 		ControllerLeft1.configPeakOutputVoltage(+4f, -4f);
 		ControllerRight1.configPeakOutputVoltage(+4f, -4f);
 		
-		ControllerRight1.configEncoderCodesPerRev(2048);
+		ControllerRight1.configEncoderCodesPerRev(1);
 		
 		ControllerLeft1.enable();
 		ControllerRight1.enable();
@@ -86,6 +97,16 @@ public class DriveSystem extends Subsystem {
 		m_dDriveI = 0.0;
 		m_dDriveD = 0.0;
 		m_iDriveError = 50;
+		
+		m_dGyroP = 0.7;
+		m_dGyroI = 0.0;
+		m_dGyroD = 0.0;
+		m_iGyroError = 2;
+		
+		
+		turnToAngle = new PIDController(0,0, 0.0, 0.0, new getAngle(), new turnAngle());
+		
+		navxGyro = new AHRS(SPI.Port.kMXP);
 	}
 	
 	public void ArcadeDrive(double stickX, double stickY){
@@ -124,7 +145,7 @@ public class DriveSystem extends Subsystem {
     public void initEncoder (double distance){
     	driveDistance.reset();
     //	m_dDistance = distance;
-    	double rotations = m_dDistance / (m_dWheelDiameter * Math.PI);
+    	double rotations = distance / (m_dWheelDiameter * Math.PI) * 2048;
     	driveDistance.setAbsoluteTolerance(m_iDriveError);
     	ControllerRight1.setPosition(0.0);
     	driveDistance.setInputRange(-rotations * 1.5, rotations * 1.5);
@@ -144,6 +165,32 @@ public class DriveSystem extends Subsystem {
 		return driveDistance.onTarget();
     }
     
+    public double getGyroAngle() {
+    	double navxGyroAngle = navxGyro.getAngle();
+    	return navxGyroAngle;
+    }
+    
+    public void disableGyro() {
+    	turnToAngle.disable();
+    }
+    
+    public void turnToAngle(double angle) {
+    	turnToAngle.reset();
+    	navxGyro.zeroYaw();
+    	turnToAngle.setInputRange(-180.0f, 180.0f);
+    	turnToAngle.setOutputRange(-1.0, 1.0);
+    	turnToAngle.setPID(m_dGyroP, m_dGyroI, m_dGyroD);
+    	turnToAngle.setAbsoluteTolerance( m_iGyroError);
+    	turnToAngle.setContinuous(true);
+    	turnToAngle.setSetpoint(angle);
+    	turnToAngle.enable();
+    }
+    
+    public boolean gyroOnTarget() {
+    	return turnToAngle.onTarget();
+    }
+    
+    
     public void dashboardDisplay() {
     	SmartDashboard.putNumber("WheelDiameter", m_dWheelDiameter);
 		SmartDashboard.putNumber("dDriveP", m_dDriveP);
@@ -154,7 +201,7 @@ public class DriveSystem extends Subsystem {
 		SmartDashboard.putNumber("Rotations", m_dRotations);
     }
     
-    public void dashboardFetch() {
+    public double dashboardFetch() {
     	m_dWheelDiameter = SmartDashboard.getNumber("WheelDiameter", m_dWheelDiameter);
 		m_dDriveP = SmartDashboard.getNumber("dDriveP", m_dDriveP);
 		m_dDriveI = SmartDashboard.getNumber("dDriveI", m_dDriveI);
@@ -162,7 +209,26 @@ public class DriveSystem extends Subsystem {
 		m_iDriveError = (int) SmartDashboard.getNumber("DriveError", m_iDriveError);
 		m_dDistance = SmartDashboard.getNumber("Distance", m_dDistance);
 		m_dRotations = SmartDashboard.getNumber("Rotations", m_dRotations);
+		return m_dDistance;
     }
+    
+    public void dashboardGyroDisplay() {
+		SmartDashboard.putNumber("dGyroP", m_dGyroP);
+		SmartDashboard.putNumber("dGyroI", m_dGyroI);
+		SmartDashboard.putNumber("dGyroD", m_dGyroD);
+		SmartDashboard.putNumber("GyroError", m_iGyroError);
+		SmartDashboard.putNumber("Angle", m_dAngle);
+    }
+  
+    public double dashboardGyroFetch() {
+		m_dGyroP = SmartDashboard.getNumber("dGyroP", m_dGyroP);
+		m_dGyroI = SmartDashboard.getNumber("dGyroI", m_dGyroI);
+		m_dGyroD = SmartDashboard.getNumber("dGyroD", m_dGyroD);
+		m_iGyroError = (int) SmartDashboard.getNumber("GyroError", m_iGyroError);
+		m_dAngle = SmartDashboard.getNumber("Angle", m_dAngle);
+		return m_dAngle;
+    }
+    
     
     public void logDashboard (double Y, double X){
     	
@@ -180,6 +246,7 @@ public class DriveSystem extends Subsystem {
     	SmartDashboard.putNumber("Right1Encoder", ControllerRight1.getSpeed());
     	SmartDashboard.putNumber("RightEncoderPos", ControllerRight1.getPosition());
     	SmartDashboard.putNumber("DriveYToggle", m_dThrottleDirection);
+    	SmartDashboard.putNumber("GyroAngle", navxGyro.getAngle());
     }
    
     private class EncoderWrapper implements PIDSource{
@@ -212,8 +279,35 @@ public class DriveSystem extends Subsystem {
 		}
     	
     }
+   
+    private class getAngle implements PIDSource {
+
+		@Override
+		public void setPIDSourceType(PIDSourceType pidSource) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public PIDSourceType getPIDSourceType() {
+			// TODO Auto-generated method stub
+			return PIDSourceType.kDisplacement;
+		}
+
+		@Override
+		public double pidGet() {
+			// TODO Auto-generated method stub
+			return getGyroAngle();
+		}			
+    }
     
+    private class turnAngle implements PIDOutput {
+
+		@Override
+		public void pidWrite(double output) {
+			// TODO Auto-generated method stub
+			ArcadeDrive(output, 0);
+		}
+    }
 }
-
-
 

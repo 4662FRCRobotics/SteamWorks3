@@ -7,20 +7,20 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class DriveDistancePID extends Command {
+public class DashboardDriveDistancePID extends Command {
 
 	private double m_dDistance;
 	
-    public DriveDistancePID(double distance) {
+    public DashboardDriveDistancePID() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.driveSystem);
-    	m_dDistance = distance;
+    	
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	
+    	m_dDistance = Robot.driveSystem.dashboardFetch();
     	Robot.driveSystem.initEncoder(m_dDistance);
     }
 

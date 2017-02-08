@@ -7,36 +7,35 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class DriveDistancePID extends Command {
+public class DashboardGyroRotatePID extends Command {
 
-	private double m_dDistance;
+	private double m_dAngle;
 	
-    public DriveDistancePID(double distance) {
+    public DashboardGyroRotatePID() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.driveSystem);
-    	m_dDistance = distance;
-    }
-
-    // Called just before this Command runs the first time
-    protected void initialize() {
     	
-    	Robot.driveSystem.initEncoder(m_dDistance);
     }
-
+    protected void initialize() {
+    // Called just before this Command runs the first time
+    	m_dAngle = Robot.driveSystem.dashboardGyroFetch();
+    	Robot.driveSystem.turnToAngle(m_dAngle);
+    	
+}
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-    	return Robot.driveSystem.encoderOnTarget();
+    	return Robot.driveSystem.gyroOnTarget();
     }
 
     // Called once after isFinished returns true
     protected void end() {
     	Robot.driveSystem.ArcadeDrive(0, 0);
-    	Robot.driveSystem.disableEncoder();
+    	Robot.driveSystem.disableGyro();
     }
 
     // Called when another command which requires one or more of the same

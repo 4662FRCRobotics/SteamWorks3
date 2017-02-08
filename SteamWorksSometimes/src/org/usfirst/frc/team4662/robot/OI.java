@@ -47,9 +47,11 @@ public class OI {
 	public OI()  {
 		
 		ToggleFront.whenPressed(new SwitchFront());	
-		DriveDistancePID.whenPressed(new DriveDistancePID(72));
+		DriveDistancePID.whenPressed(new DriveDistancePID(24));
 		
 		SmartDashboard.putData("InterruptPID", new InterruptPID());
-	}
+		SmartDashboard.putData("DashboardDrivePID", new DashboardDriveDistancePID());
+		SmartDashboard.putData("DashboardGyroPID", new DashboardGyroRotatePID());
+		}
 	
 }
