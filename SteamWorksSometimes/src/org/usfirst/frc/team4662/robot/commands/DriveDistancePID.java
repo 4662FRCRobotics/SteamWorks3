@@ -10,12 +10,14 @@ import edu.wpi.first.wpilibj.command.Command;
 public class DriveDistancePID extends Command {
 
 	private double m_dDistance;
+	private double m_dThrottle;
 	
-    public DriveDistancePID(double distance) {
+    public DriveDistancePID(double distance, double throttle) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.driveSystem);
     	m_dDistance = distance;
+    	m_dThrottle = throttle;
     }
 
     // Called just before this Command runs the first time

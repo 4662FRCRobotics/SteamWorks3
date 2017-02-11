@@ -56,6 +56,10 @@ public class DriveSystem extends Subsystem {
 	
 	private int m_iGyroError;
 	
+	private double lastLinearAccelX;
+	private double lastLinearAccelY;
+	
+	private double kCollisionThreshold_DeltaG;
 	
 	public DriveSystem(){
 		
@@ -85,6 +89,7 @@ public class DriveSystem extends Subsystem {
 		
 		
 		steamDrive = new RobotDrive(ControllerLeft1, ControllerRight1);
+		steamDrive.setSafetyEnabled(false);
 		
 //		SmartDashboard.putString("DriveSytem", "ConstructorMethod");
 	    
@@ -93,10 +98,10 @@ public class DriveSystem extends Subsystem {
 		m_bThrottleSwitch = false;
 		
 		m_dWheelDiameter = 7.75;
-		m_dDriveP = 0.7;
+		m_dDriveP = 0.2;
 		m_dDriveI = 0.0;
 		m_dDriveD = 0.0;
-		m_iDriveError = 50;
+		m_iDriveError = 20;
 		
 		m_dGyroP = 0.7;
 		m_dGyroI = 0.0;
@@ -107,6 +112,9 @@ public class DriveSystem extends Subsystem {
 		turnToAngle = new PIDController(0,0, 0.0, 0.0, new getAngle(), new turnAngle());
 		
 		navxGyro = new AHRS(SPI.Port.kMXP);
+		
+		kCollisionThreshold_DeltaG = 0.5f;
+		
 	}
 	
 	public void ArcadeDrive(double stickX, double stickY){
@@ -143,17 +151,20 @@ public class DriveSystem extends Subsystem {
     }
     
     public void initEncoder (double distance){
+    	initEncoder(distance, 1.0);    	
+    }
+    
+    public void initEncoder (double distance, double throttle){
     	driveDistance.reset();
     //	m_dDistance = distance;
     	double rotations = distance / (m_dWheelDiameter * Math.PI) * 2048;
     	driveDistance.setAbsoluteTolerance(m_iDriveError);
     	ControllerRight1.setPosition(0.0);
-    	driveDistance.setInputRange(-rotations * 1.5, rotations * 1.5);
-    	driveDistance.setOutputRange(-1.0, 1.0);
+    	driveDistance.setInputRange(-Math.abs(rotations) * 1.5, Math.abs(rotations) * 1.5);
+    	driveDistance.setOutputRange(-throttle, throttle);
     	driveDistance.setPID(m_dDriveP, m_dDriveI, m_dDriveD);
     	driveDistance.setSetpoint(rotations);
     	m_dRotations = rotations;
-    	m_dRotations = 3;
     	driveDistance.enable();
     }
     
@@ -229,6 +240,22 @@ public class DriveSystem extends Subsystem {
 		return m_dAngle;
     }
     
+    public boolean isBumped() {
+    	boolean collisionDetected = false;
+    	double currLinearAccelX = navxGyro.getWorldLinearAccelX();
+    	double currentJerkX = currLinearAccelX - lastLinearAccelX;
+    	lastLinearAccelX = currLinearAccelX;
+    	double currLinearAccelY = navxGyro.getWorldLinearAccelY();
+    	double currentJerkY = currLinearAccelY - lastLinearAccelY;
+    	lastLinearAccelY = currLinearAccelY;
+    	
+    	if ( ( Math.abs(currentJerkX) > kCollisionThreshold_DeltaG  ) ||
+    	   ( Math.abs(currentJerkY) > kCollisionThreshold_DeltaG) ) {
+    		   collisionDetected = true;   
+    	   }
+    	
+    	return collisionDetected;
+    }
     
     public void logDashboard (double Y, double X){
     	
@@ -247,6 +274,9 @@ public class DriveSystem extends Subsystem {
     	SmartDashboard.putNumber("RightEncoderPos", ControllerRight1.getPosition());
     	SmartDashboard.putNumber("DriveYToggle", m_dThrottleDirection);
     	SmartDashboard.putNumber("GyroAngle", navxGyro.getAngle());
+    	
+    	SmartDashboard.putNumber("lastLinearAccelX", navxGyro.getWorldLinearAccelX());
+    	SmartDashboard.putNumber("lastLinearAccelY", navxGyro.getWorldLinearAccelY());
     }
    
     private class EncoderWrapper implements PIDSource{
