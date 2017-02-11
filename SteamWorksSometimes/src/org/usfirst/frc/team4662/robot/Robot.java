@@ -1,6 +1,10 @@
 
 package org.usfirst.frc.team4662.robot;
 
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -8,8 +12,13 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team4662.robot.commands.*;
 import org.usfirst.frc.team4662.robot.subsystems.DriveSystem;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -19,14 +28,14 @@ import org.usfirst.frc.team4662.robot.subsystems.DriveSystem;
  * directory.
  */
 public class Robot extends IterativeRobot {
-
+	public boolean isDriveToggled = false;
 	public static DriveSystem driveSystem;
-	
 	public static OI oi;
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
-
+	Thread visionThread;
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -40,8 +49,63 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Auto mode", chooser);
 		driveSystem.dashboardDisplay();
 		driveSystem.dashboardGyroDisplay();
-	}
+	
 
+	visionThread = new Thread(() -> {
+
+		UsbCamera shooterCam = CameraServer.getInstance().startAutomaticCapture(0);
+		UsbCamera gearCam = CameraServer.getInstance().startAutomaticCapture(1);
+		
+		shooterCam.setResolution(320, 240);
+		shooterCam.setFPS(5);
+		gearCam.setResolution(320, 240);
+		gearCam.setFPS(5);
+		
+		//CvSinks capture Mats from the camera.
+		CvSink cvSinkShooter = CameraServer.getInstance().getVideo(shooterCam);
+		CvSink cvSinkGear = CameraServer.getInstance().getVideo(gearCam);
+			//CvSourc sends images back to the Dashboard
+		CvSource outputStream = CameraServer.getInstance().putVideo("DriveCam", 320, 240);
+	
+		//Mats are very memory expensive. Reuse this Mat.
+		Mat mat = new Mat();
+		
+		
+		//Cannot be "true" bc program will not exist. 
+		//Lets robot stop thread when restarting robot code or deploying
+		
+		while (!Thread.interrupted()) {
+			//if toggleDrive
+			//unfinished
+			//toggleDrive is a Joystick button
+			if (isDriveToggled) {
+				cvSinkGear.setEnabled(false);
+				cvSinkShooter.setEnabled(true);
+				if(cvSinkShooter.grabFrame(mat) == 0) {
+					// Send the output the error
+					outputStream.notifyError(cvSinkShooter.getError());
+					continue;
+				}
+			} else {
+				cvSinkShooter.setEnabled(false);
+				cvSinkGear.setEnabled(true);
+				if(cvSinkGear.grabFrame(mat) == 0) {
+					// Send the output the error
+					outputStream.notifyError(cvSinkGear.getError());
+					continue;
+				}
+			}
+			// Put a rectangle on the image
+			Imgproc.rectangle(mat, new Point(60, 40), new Point(260, 200),
+					new Scalar(255, 255, 255), 5);
+			outputStream.putFrame(mat);
+		}
+	});
+	visionThread.setDaemon(true);
+	visionThread.start();
+}
+		
+		
 	/**
 	 * This function is called once each time the robot enters Disabled mode.
 	 * You can use it to reset any subsystem information you want to clear when
@@ -117,4 +181,5 @@ public class Robot extends IterativeRobot {
 	public void testPeriodic() {
 		LiveWindow.run();
 	}
+	
 }
