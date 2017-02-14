@@ -18,6 +18,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team4662.robot.commands.*;
 import org.usfirst.frc.team4662.robot.subsystems.DriveSystem;
+import org.usfirst.frc.team4662.robot.subsystems.VisionSystem;
 
 
 /**
@@ -30,6 +31,7 @@ import org.usfirst.frc.team4662.robot.subsystems.DriveSystem;
 public class Robot extends IterativeRobot {
 	public boolean isDriveToggled = false;
 	public static DriveSystem driveSystem;
+	public static VisionSystem visionSystem;
 	public static OI oi;
 
 	Command autonomousCommand;
@@ -44,6 +46,7 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		RobotMap.init();
 		driveSystem = new DriveSystem();
+		visionSystem = new VisionSystem();
 		oi = new OI();
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
@@ -78,7 +81,7 @@ public class Robot extends IterativeRobot {
 			//if toggleDrive
 			//unfinished
 			//toggleDrive is a Joystick button
-			if (isDriveToggled) {
+			if (!visionSystem.isGearForward()) {
 				cvSinkGear.setEnabled(false);
 				cvSinkShooter.setEnabled(true);
 				if(cvSinkShooter.grabFrame(mat) == 0) {

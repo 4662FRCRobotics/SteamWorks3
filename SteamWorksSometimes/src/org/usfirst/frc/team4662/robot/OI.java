@@ -42,10 +42,12 @@ public class OI {
 	
 	public Joystick driveStick = new Joystick(0);
 	public JoystickButton ToggleFront = new JoystickButton(driveStick,11); 
+	public JoystickButton Take5 = new JoystickButton(driveStick, 5);
 	
 	public OI()  {
 		
 		ToggleFront.whenPressed(new SwitchFront());	
+		Take5.whenPressed(new WaitForIt(5));
 		
 		SmartDashboard.putData("InterruptPID", new InterruptPID());
 		SmartDashboard.putData("DashboardDrivePID", new DashboardDriveDistancePID());

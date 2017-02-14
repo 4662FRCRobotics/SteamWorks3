@@ -7,27 +7,30 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class SwitchFront extends Command {
+public class WaitForIt extends Command {
 
-    public SwitchFront() {
+	private double timeOutVal;
+	
+    public WaitForIt(double timeOutValue) {
         // Use requires() here to declare subsystem dependencies
-        requires(Robot.driveSystem);
-        requires(Robot.visionSystem);
+        // eg. requires(chassis);
+    	requires(Robot.driveSystem);
+    	timeOutVal = timeOutValue;
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	Robot.driveSystem.ArcadeDrive(0, 0);
+    	setTimeout(timeOutVal);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.driveSystem.ToggleEnds();
-    	Robot.visionSystem.toggleEnds();
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Robot.driveSystem.isToggled();
+        return isTimedOut();
     }
 
     // Called once after isFinished returns true

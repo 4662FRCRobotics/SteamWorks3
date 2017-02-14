@@ -87,11 +87,12 @@ public class Autonomous extends CommandGroup {
 	    			case "shoot":
 	    				addSequential (new Shoot());
 	    				break;
+	    			*/
 	    			case "wait":
 	    				dWaitDuration = Double.valueOf(autoArray [i + 1]);
-	    				addSequential (new AutoWait(dWaitDuration));
+	    				addSequential (new WaitForIt(dWaitDuration));
 	    				break;
-	    		*/			    			
+	    					    			
 	    			default:
 	    				SmartDashboard.putString("HI", "Default");
 	    				
