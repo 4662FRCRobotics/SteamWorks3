@@ -43,15 +43,22 @@ public class OI {
 	public Joystick driveStick = new Joystick(0);
 	public JoystickButton ToggleFront = new JoystickButton(driveStick,11); 
 	public JoystickButton Take5 = new JoystickButton(driveStick, 5);
+	public JoystickButton ToggleVision = new JoystickButton(driveStick, 7);
 	
 	public OI()  {
 		
 		ToggleFront.whenPressed(new SwitchFront());	
 		Take5.whenPressed(new WaitForIt(5));
+		ToggleVision.whenPressed(new VisionToggle());
 		
 		SmartDashboard.putData("InterruptPID", new InterruptPID());
 		SmartDashboard.putData("DashboardDrivePID", new DashboardDriveDistancePID());
 		SmartDashboard.putData("DashboardGyroPID", new DashboardGyroRotatePID());
 		}
+
+	private JoystickButton JoystickButton(Joystick driveStick2, int i) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
