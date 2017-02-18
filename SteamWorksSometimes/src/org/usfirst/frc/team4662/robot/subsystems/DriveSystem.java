@@ -3,6 +3,7 @@ package org.usfirst.frc.team4662.robot.subsystems;
 import org.usfirst.frc.team4662.robot.RobotMap;
 import org.usfirst.frc.team4662.robot.commands.ArcadeDrive;
 import com.ctre.CANTalon;
+import com.ctre.CANTalon.FeedbackDevice;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -38,6 +39,7 @@ public class DriveSystem extends Subsystem {
 	private PIDController driveDistance;
 	
 	private double m_dWheelDiameter;
+	private double m_dEncoderPulseCnt;
 	
 	private double m_dDriveP;
 	private double m_dDriveI;
@@ -52,6 +54,9 @@ public class DriveSystem extends Subsystem {
 	private double m_dGyroI;
 	private double m_dGyroD;
 	
+	private double m_dVoltageRampRate;
+	private double m_dJoystickVolts;
+	
 	private double m_dAngle;
 	
 	private int m_iGyroError;
@@ -65,10 +70,10 @@ public class DriveSystem extends Subsystem {
 		
 		ControllerLeft1 = new CANTalon(RobotMap.leftMotor1);
 		ControllerLeft2 = new CANTalon(RobotMap.leftMotor2);
-		ControllerLeft1.setInverted(false);
+		ControllerLeft1.setInverted(true);
 		ControllerRight1 = new CANTalon(RobotMap.rightMotor1);
 		ControllerRight2 = new CANTalon(RobotMap.rightMotor2);
-		ControllerRight1.setInverted(true);
+		ControllerRight1.setInverted(false);
 		
 		ControllerLeft2.changeControlMode(CANTalon.TalonControlMode.Follower); //makes the controllers followers
 		ControllerRight2.changeControlMode(CANTalon.TalonControlMode.Follower);
@@ -81,7 +86,11 @@ public class DriveSystem extends Subsystem {
 		
 		ControllerLeft1.configPeakOutputVoltage(+4f, -4f);
 		ControllerRight1.configPeakOutputVoltage(+4f, -4f);
-		
+
+		// new device and inverted needs validation 2/18 TRO
+		ControllerRight1.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+		//ControllerRight1.reverseOutput(true);
+		//ControllerRight1.reverseSensor(true);
 		ControllerRight1.configEncoderCodesPerRev(1);
 		
 		ControllerLeft1.enable();
@@ -96,8 +105,11 @@ public class DriveSystem extends Subsystem {
 		driveDistance = new PIDController(0.7, 0.0, 0.0, new EncoderWrapper(), new DriveDistancePID());
 		m_dThrottleDirection = 1;
 		m_bThrottleSwitch = false;
+		m_dVoltageRampRate = 3.0;
+		m_dJoystickVolts = 8.0;
 		
-		m_dWheelDiameter = 7.75;
+		m_dWheelDiameter = 4.0;
+		m_dEncoderPulseCnt = 1024;
 		m_dDriveP = 0.2;
 		m_dDriveI = 0.0;
 		m_dDriveD = 0.0;
@@ -150,6 +162,21 @@ public class DriveSystem extends Subsystem {
     	setDefaultCommand(new ArcadeDrive());
     }
     
+    public void initJoystickDrive() {
+    	ControllerRight1.enableLimitSwitch(false, false);
+    	ControllerRight1.setVoltageRampRate(m_dVoltageRampRate);
+    	ControllerRight1.configNominalOutputVoltage(-+0.0, -0.0);
+    	ControllerRight1.configPeakOutputVoltage(m_dJoystickVolts, -m_dJoystickVolts);
+    	ControllerRight1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+    	ControllerRight1.enable();
+    	ControllerLeft1.enableLimitSwitch(false, false);
+    	ControllerLeft1.setVoltageRampRate(m_dVoltageRampRate);
+    	ControllerLeft1.configNominalOutputVoltage(-+0.0, -0.0);
+    	ControllerLeft1.configPeakOutputVoltage(m_dJoystickVolts, -m_dJoystickVolts);
+    	ControllerLeft1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+    	ControllerLeft1.enable();
+    }
+    
     public void initEncoder (double distance){
     	initEncoder(distance, 1.0);    	
     }
@@ -157,7 +184,7 @@ public class DriveSystem extends Subsystem {
     public void initEncoder (double distance, double throttle){
     	driveDistance.reset();
     //	m_dDistance = distance;
-    	double rotations = distance / (m_dWheelDiameter * Math.PI) * 2048;
+    	double rotations = distance / (m_dWheelDiameter * Math.PI) * m_dEncoderPulseCnt;
     	driveDistance.setAbsoluteTolerance(m_iDriveError);
     	ControllerRight1.setPosition(0.0);
     	driveDistance.setInputRange(-Math.abs(rotations) * 1.5, Math.abs(rotations) * 1.5);
@@ -257,7 +284,7 @@ public class DriveSystem extends Subsystem {
     	return collisionDetected;
     }
     
-    public void logDashboard (double Y, double X){
+    public void logDashboard(double Y, double X){
     	
     	SmartDashboard.putNumber("DriverStickY", Y);
     	SmartDashboard.putNumber("DriverStickX", X);

@@ -22,11 +22,28 @@ public class RobotMap {
 	public static int rightMotor1;
 	public static int rightMotor2;
 	
+	public static int ropeMotor1;
+	public static int ropeMotor2;
+	
+	public static int boilerLoaderMotor1;
+	public static int gateServo;
+	
+	public static int loaderMotor;
+		//not in init yet 
+	
 	public static void init(){
 		leftMotor1 = 2;
 		leftMotor2 = 3;
 		rightMotor1 = 4;
 		rightMotor2 = 5;
+		
+		ropeMotor1 = 0;
+		ropeMotor2 = 1;
+		
+		boilerLoaderMotor1 = 2;
+		gateServo = 3;
+		
+		loaderMotor = 4;
 	}
 	
 }

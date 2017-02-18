@@ -18,6 +18,9 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team4662.robot.commands.*;
 import org.usfirst.frc.team4662.robot.subsystems.DriveSystem;
+import org.usfirst.frc.team4662.robot.subsystems.LoaderSystem;
+import org.usfirst.frc.team4662.robot.subsystems.RopeSystem;
+import org.usfirst.frc.team4662.robot.subsystems.ShooterSystem;
 import org.usfirst.frc.team4662.robot.subsystems.VisionSystem;
 
 
@@ -32,6 +35,9 @@ public class Robot extends IterativeRobot {
 	public boolean isDriveToggled = false;
 	public static DriveSystem driveSystem;
 	public static VisionSystem visionSystem;
+	public static RopeSystem ropeSystem;
+	public static ShooterSystem boilerLoader;
+	public static LoaderSystem loaderSystem;
 	public static OI oi;
 
 	Command autonomousCommand;
@@ -47,6 +53,9 @@ public class Robot extends IterativeRobot {
 		RobotMap.init();
 		driveSystem = new DriveSystem();
 		visionSystem = new VisionSystem();
+		ropeSystem = new RopeSystem();
+		boilerLoader = new ShooterSystem();
+		loaderSystem = new LoaderSystem();
 		oi = new OI();
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
