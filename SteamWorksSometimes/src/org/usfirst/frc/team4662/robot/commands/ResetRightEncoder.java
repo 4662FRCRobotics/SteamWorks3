@@ -7,26 +7,27 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class ArcadeDrive extends Command {
+public class ResetRightEncoder extends Command {
 
-    public ArcadeDrive() {
+    public ResetRightEncoder() {
+    	requires(Robot.driveSystem);
         // Use requires() here to declare subsystem dependencies
-        requires(Robot.driveSystem);
+        // eg. requires(chassis);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
+    	Robot.driveSystem.resetRightEncoder();
+    	//ControllerRight1.setPosition(0.0);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	double throttle = 2 / (Robot.oi.driveStick.getThrottle() + 3.0);
-    	Robot.driveSystem.ArcadeDrive(Robot.oi.driveStick.getZ() * 0.75 * throttle, Robot.oi.driveStick.getY() * throttle);
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return false;
+        return true;
     }
 
     // Called once after isFinished returns true
@@ -36,5 +37,6 @@ public class ArcadeDrive extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+    	end();
     }
 }

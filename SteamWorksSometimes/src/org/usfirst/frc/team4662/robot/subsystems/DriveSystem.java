@@ -1,5 +1,6 @@
 package org.usfirst.frc.team4662.robot.subsystems;
 
+import org.usfirst.frc.team4662.robot.Robot;
 import org.usfirst.frc.team4662.robot.RobotMap;
 import org.usfirst.frc.team4662.robot.commands.ArcadeDrive;
 import com.ctre.CANTalon;
@@ -66,14 +67,17 @@ public class DriveSystem extends Subsystem {
 	
 	private double kCollisionThreshold_DeltaG;
 	
+	private double currentJerkX;
+	private double currentJerkY;
+	
 	public DriveSystem(){
 		
 		ControllerLeft1 = new CANTalon(RobotMap.leftMotor1);
 		ControllerLeft2 = new CANTalon(RobotMap.leftMotor2);
-		ControllerLeft1.setInverted(true);
+		ControllerLeft1.setInverted(false);
 		ControllerRight1 = new CANTalon(RobotMap.rightMotor1);
 		ControllerRight2 = new CANTalon(RobotMap.rightMotor2);
-		ControllerRight1.setInverted(false);
+		ControllerRight1.setInverted(true);
 		
 		ControllerLeft2.changeControlMode(CANTalon.TalonControlMode.Follower); //makes the controllers followers
 		ControllerRight2.changeControlMode(CANTalon.TalonControlMode.Follower);
@@ -184,7 +188,7 @@ public class DriveSystem extends Subsystem {
     public void initEncoder (double distance, double throttle){
     	driveDistance.reset();
     //	m_dDistance = distance;
-    	double rotations = distance / (m_dWheelDiameter * Math.PI) * m_dEncoderPulseCnt;
+    	double rotations = distance / (m_dWheelDiameter * Math.PI);
     	driveDistance.setAbsoluteTolerance(m_iDriveError);
     	ControllerRight1.setPosition(0.0);
     	driveDistance.setInputRange(-Math.abs(rotations) * 1.5, Math.abs(rotations) * 1.5);
@@ -196,11 +200,15 @@ public class DriveSystem extends Subsystem {
     }
     
     public void disableEncoder () {
-    	driveDistance.disable();
+    	driveDistance.disable();e
     }
     
     public boolean encoderOnTarget() {
 		return driveDistance.onTarget();
+    }
+    
+    public void resetRightEncoder() {
+    	ControllerRight1.setPosition(0.0);
     }
     
     public double getGyroAngle() {
@@ -278,9 +286,8 @@ public class DriveSystem extends Subsystem {
     	
     	if ( ( Math.abs(currentJerkX) > kCollisionThreshold_DeltaG  ) ||
     	   ( Math.abs(currentJerkY) > kCollisionThreshold_DeltaG) ) {
-    		   collisionDetected = true;   
+    		   collisionDetected = true;
     	   }
-    	
     	return collisionDetected;
     }
     
@@ -304,6 +311,14 @@ public class DriveSystem extends Subsystem {
     	
     	SmartDashboard.putNumber("lastLinearAccelX", navxGyro.getWorldLinearAccelX());
     	SmartDashboard.putNumber("lastLinearAccelY", navxGyro.getWorldLinearAccelY());
+    	
+    	SmartDashboard.putNumber("X Displacement", navxGyro.getDisplacementX());
+    	SmartDashboard.putNumber("Y Displacement", navxGyro.getDisplacementY());
+    	SmartDashboard.putNumber("Z Displacement", navxGyro.getDisplacementZ());
+    	
+    	SmartDashboard.putNumber("Jerk X Value", currentJerkX);
+    	SmartDashboard.putNumber("Jerk Y Value", currentJerkY);
+    	SmartDashboard.putBoolean("IsBumped", Robot.driveSystem.isBumped());
     }
    
     private class EncoderWrapper implements PIDSource{

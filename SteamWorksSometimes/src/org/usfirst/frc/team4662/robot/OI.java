@@ -61,7 +61,7 @@ public class OI {
 		SmartDashboard.putData("InterruptPID", new InterruptPID());
 		SmartDashboard.putData("DashboardDrivePID", new DashboardDriveDistancePID());
 		SmartDashboard.putData("DashboardGyroPID", new DashboardGyroRotatePID());
-		
+		SmartDashboard.putData("ResetRightEncoder", new ResetRightEncoder());
 	}
 
 	private JoystickButton JoystickButton(Joystick driveStick2, int i) {

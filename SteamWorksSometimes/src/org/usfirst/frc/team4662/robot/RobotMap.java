@@ -32,10 +32,10 @@ public class RobotMap {
 		//not in init yet 
 	
 	public static void init(){
-		leftMotor1 = 2;
-		leftMotor2 = 3;
-		rightMotor1 = 4;
-		rightMotor2 = 5;
+		leftMotor1 = 4;
+		leftMotor2 = 5;
+		rightMotor1 = 2;
+		rightMotor2 = 3;
 		
 		ropeMotor1 = 0;
 		ropeMotor2 = 1;
