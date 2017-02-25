@@ -37,7 +37,7 @@ public class Autonomous extends CommandGroup {
     	double dSpeed = 1.0;
     	double dWaitDuration = 0;
     	double dAngle = 0;
-    	
+    	double dTimeOutVal = 1.5;
     	//Preferences prefs = Preferences.getInstance();
     	SmartDashboard.putString("AutoCommandGroup", "Start");
     	
@@ -79,15 +79,25 @@ public class Autonomous extends CommandGroup {
 	    	    		SmartDashboard.putNumber("RAngle", dDistance);
 	    				addSequential (new GyroRotatePID(dAngle));
 	    				break;
+	    				
+	    			case "gearforward":
+	    				addSequential (new GearFront());
+	    				break;
+	    				
+	    			case "shooterforward":
+	    				addSequential (new ShooterFront());
+	    				break;
 	    			/*case "locatetarget":
 	    	    		iDistance = Integer.valueOf(autoArray[i + 1]);
 	    	    		//SmartDashboard.putNumber("Distance", iDistance);
 	    				addSequential (new LocateTarget());
 	    				break;
-	    			case "shoot":
-	    				addSequential (new Shoot());
-	    				break;
 	    			*/
+	    			case "shoot":
+	    				dTimeOutVal = Double.valueOf(autoArray[i + 1]);
+	    				addSequential (new BallShoot(dTimeOutVal));
+	    				break;
+	    			
 	    			case "wait":
 	    				dWaitDuration = Double.valueOf(autoArray [i + 1]);
 	    				addSequential (new WaitForIt(dWaitDuration));

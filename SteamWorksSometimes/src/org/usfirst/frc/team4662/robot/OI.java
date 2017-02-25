@@ -45,9 +45,10 @@ public class OI {
 	public JoystickButton Take5 = new JoystickButton(driveStick, 5);
 	public JoystickButton ToggleVision = new JoystickButton(driveStick, 7);
 	public JoystickButton Climb = new JoystickButton(driveStick, 3);
-	public JoystickButton Shoot = new JoystickButton(driveStick, 2);
+	public JoystickButton Shoot = new JoystickButton(driveStick, 1);
 	public JoystickButton Load = new JoystickButton(driveStick, 6); 
 	public JoystickButton Unload = new JoystickButton(driveStick, 8); 
+	public JoystickButton StayTrue = new JoystickButton(driveStick, 2);
 	
 	public OI()  {
 		
@@ -57,6 +58,7 @@ public class OI {
 		Climb.whileHeld(new ClimbRope());
 		Shoot.whileHeld(new BallShoot());
 		Load.whileHeld(new LoadLoad());
+		StayTrue.whileHeld(new DriveStraight());
 		
 		SmartDashboard.putData("InterruptPID", new InterruptPID());
 		SmartDashboard.putData("DashboardDrivePID", new DashboardDriveDistancePID());

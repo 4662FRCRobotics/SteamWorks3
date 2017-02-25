@@ -7,51 +7,35 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class BallShoot extends Command {
-	
-	private boolean isAutonomous;
-	private double m_dTimeOut;
+public class GearFront extends Command {
 
-    public BallShoot() {
+    public GearFront() {
         // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-    	requires(Robot.boilerLoader);
-    	isAutonomous = false;
-    	m_dTimeOut = 0;
-    }
-    public BallShoot(double TO) {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-    	requires(Robot.boilerLoader);
-    	isAutonomous = true;
-    	m_dTimeOut = TO;
+        requires(Robot.driveSystem);
+        requires(Robot.visionSystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	setTimeout(m_dTimeOut);
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.boilerLoader.shooterGo();
-    	Robot.boilerLoader.servoOpen();
+    	Robot.driveSystem.GearForward();
+    	Robot.visionSystem.GearCam();
     }
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return isAutonomous && isTimedOut();
+        return Robot.driveSystem.isToggled();
     }
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.boilerLoader.shooterStop();
-    	Robot.boilerLoader.servoClose();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
-    	end();
     }
 }

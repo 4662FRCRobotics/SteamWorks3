@@ -31,6 +31,16 @@ public class VisionSystem extends Subsystem {
     	VisionTable.putBoolean("IsGearDrive", m_bGearForward);
     }
     
+    public void GearCam(){
+    	m_bGearForward = true;
+    	VisionTable.putBoolean("IsGearDrive", m_bGearForward);
+    }
+    
+    public void ShooterCam(){
+    	m_bGearForward = false;
+    	VisionTable.putBoolean("IsGearDrive", m_bGearForward);
+    }
+    
     public void isVisionOnToggle() {
     	m_bIsVisionOn = !m_bIsVisionOn;
     	SmartDashboard.putBoolean("IsVisionOn", m_bIsVisionOn);

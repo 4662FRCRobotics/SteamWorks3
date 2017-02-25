@@ -65,13 +65,15 @@ public class Robot extends IterativeRobot {
 
 	visionThread = new Thread(() -> {
 
-		UsbCamera shooterCam = CameraServer.getInstance().startAutomaticCapture(0);
-		UsbCamera gearCam = CameraServer.getInstance().startAutomaticCapture(1);
+		//UsbCamera shooterCam = CameraServer.getInstance().startAutomaticCapture(0);
+		//UsbCamera gearCam = CameraServer.getInstance().startAutomaticCapture(1);
+		UsbCamera shooterCam = new UsbCamera ( "USB Camera 0", 0);
+		UsbCamera gearCam = new UsbCamera ( "USB Camera 1", 1);
 		
 		shooterCam.setResolution(320, 240);
-		shooterCam.setFPS(5);
+		shooterCam.setFPS(15);
 		gearCam.setResolution(320, 240);
-		gearCam.setFPS(5);
+		gearCam.setFPS(15);
 		
 		//CvSinks capture Mats from the camera.
 		CvSink cvSinkShooter = CameraServer.getInstance().getVideo(shooterCam);

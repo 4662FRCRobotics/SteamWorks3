@@ -26,6 +26,7 @@ public class DriveSystem extends Subsystem {
 	
 	private AHRS navxGyro;
 	private PIDController turnToAngle;
+	private PIDController keepAngle;
 	
 	private CANTalon ControllerLeft1;
 	private CANTalon ControllerLeft2;
@@ -54,6 +55,12 @@ public class DriveSystem extends Subsystem {
 	private double m_dGyroP;
 	private double m_dGyroI;
 	private double m_dGyroD;
+
+	private double m_dStraightP;
+	private double m_dStraightI;
+	private double m_dStraightD;
+	
+	private int m_iStraightError;
 	
 	private double m_dVoltageRampRate;
 	private double m_dJoystickVolts;
@@ -69,6 +76,8 @@ public class DriveSystem extends Subsystem {
 	
 	private double currentJerkX;
 	private double currentJerkY;
+	
+	private volatile double m_dSteeringHeading; 
 	
 	public DriveSystem(){
 		
@@ -124,13 +133,18 @@ public class DriveSystem extends Subsystem {
 		m_dGyroD = 0.0;
 		m_iGyroError = 2;
 		
-		
-		turnToAngle = new PIDController(0,0, 0.0, 0.0, new getAngle(), new turnAngle());
+		m_dStraightP = 0.2;
+		m_dStraightI = 0.0;
+		m_dStraightD = 0.0;
+		m_iStraightError = 1;
+		turnToAngle = new PIDController(0.0, 0.0, 0.0, new getAngle(), new turnAngle());
 		
 		navxGyro = new AHRS(SPI.Port.kMXP);
 		
 		kCollisionThreshold_DeltaG = 0.5f;
 		
+		m_dSteeringHeading = 0;
+		keepAngle = new PIDController(0.0, 0.0, 0.0, new getAngle(), new HeadingCapture());
 	}
 	
 	public void ArcadeDrive(double stickX, double stickY){
@@ -142,16 +156,29 @@ public class DriveSystem extends Subsystem {
 	}
 	
 	public void ToggleEnds()  {
-// this still needs better safety code 
-// turning the drive off will take time to spin down
-// how about putting a check for rotation speed by an encoder and only allowing the switch once it's below a threshold
-// the command will execute until the direction is toggled
-// need to add an indicator (boolean) that is false unless the toggle is done
-// then a method to return the boolean to the toggle command
 		ArcadeDrive(0,0);
 		m_bThrottleSwitch = false;
 		if (ControllerRight1.getSpeed() > -5 && ControllerRight1.getSpeed() < 5 ) {
 			m_dThrottleDirection = m_dThrottleDirection * -1;
+			m_bThrottleSwitch = true;
+		}
+	}
+	
+	public void GearForward()  {
+		ArcadeDrive(0,0);
+		m_bThrottleSwitch = false;
+		if (ControllerRight1.getSpeed() > -5 && ControllerRight1.getSpeed() < 5 ) {
+			m_dThrottleDirection = 1;
+			m_bThrottleSwitch = true;
+		}
+	}
+	
+	
+	public void ShooterForward()  {
+		ArcadeDrive(0,0);
+		m_bThrottleSwitch = false;
+		if (ControllerRight1.getSpeed() > -5 && ControllerRight1.getSpeed() < 5 ) {
+			m_dThrottleDirection = -1;
 			m_bThrottleSwitch = true;
 		}
 	}
@@ -188,7 +215,7 @@ public class DriveSystem extends Subsystem {
     public void initEncoder (double distance, double throttle){
     	driveDistance.reset();
     //	m_dDistance = distance;
-    	double rotations = distance / (m_dWheelDiameter * Math.PI);
+    	double rotations = distance / (m_dWheelDiameter * Math.PI) * m_dEncoderPulseCnt;
     	driveDistance.setAbsoluteTolerance(m_iDriveError);
     	ControllerRight1.setPosition(0.0);
     	driveDistance.setInputRange(-Math.abs(rotations) * 1.5, Math.abs(rotations) * 1.5);
@@ -200,11 +227,11 @@ public class DriveSystem extends Subsystem {
     }
     
     public void disableEncoder () {
-    	driveDistance.disable();e
+    	driveDistance.disable();
     }
     
     public boolean encoderOnTarget() {
-		return driveDistance.onTarget();
+		return driveDistance.onTarget() || isBumped();
     }
     
     public void resetRightEncoder() {
@@ -290,6 +317,27 @@ public class DriveSystem extends Subsystem {
     	   }
     	return collisionDetected;
     }
+    
+   public void stayTrue(double throttle){
+	   ArcadeDrive(m_dSteeringHeading, throttle);
+	   
+   }
+   
+   public void keepHeading() {
+	keepAngle.reset();
+   	navxGyro.zeroYaw();
+   	keepAngle.setInputRange(-180.0f, 180.0f);
+   	keepAngle.setOutputRange(-1.0, 1.0);
+   	keepAngle.setPID(m_dStraightP, m_dStraightI, m_dStraightD);
+   	keepAngle.setAbsoluteTolerance( m_iStraightError);
+   	keepAngle.setContinuous(true);
+   	keepAngle.setSetpoint(0.0);
+   	keepAngle.enable();
+   }
+   
+   public void disableKeepAngle() {
+	   keepAngle.disable();
+   }
     
     public void logDashboard(double Y, double X){
     	
@@ -380,6 +428,16 @@ public class DriveSystem extends Subsystem {
 			// TODO Auto-generated method stub
 			ArcadeDrive(output, 0);
 		}
+    }
+    
+    private class HeadingCapture implements PIDOutput {
+
+		@Override
+		public void pidWrite(double output) {
+			// TODO Auto-generated method stub
+			m_dSteeringHeading = output;
+		}
+    	
     }
 }
 
