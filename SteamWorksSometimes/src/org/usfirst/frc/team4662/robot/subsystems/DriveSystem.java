@@ -101,7 +101,7 @@ public class DriveSystem extends Subsystem {
 		ControllerRight1.configPeakOutputVoltage(+4f, -4f);
 
 		// new device and inverted needs validation 2/18 TRO
-		ControllerRight1.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+		ControllerRight1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		//ControllerRight1.reverseOutput(true);
 		//ControllerRight1.reverseSensor(true);
 		ControllerRight1.configEncoderCodesPerRev(1);
@@ -259,10 +259,29 @@ public class DriveSystem extends Subsystem {
     	turnToAngle.enable();
     }
     
+    public void stayTrue(double throttle){
+ 	   ArcadeDrive(m_dSteeringHeading, throttle);
+    }
+    
+    public void keepHeading() {
+    	keepAngle.reset();
+    	navxGyro.zeroYaw();
+    	keepAngle.setInputRange(-180.0f, 180.0f);
+    	keepAngle.setOutputRange(-1.0, 1.0);
+    	keepAngle.setPID(m_dStraightP, m_dStraightI, m_dStraightD);
+    	keepAngle.setAbsoluteTolerance(m_iStraightError);
+    	keepAngle.setContinuous(true);
+    	keepAngle.setSetpoint(0.0);
+    	keepAngle.enable();
+    }
+    
+    public void disableKeepAngle() {
+ 	   keepAngle.disable();
+    }
+    
     public boolean gyroOnTarget() {
     	return turnToAngle.onTarget();
     }
-    
     
     public void dashboardDisplay() {
     	SmartDashboard.putNumber("WheelDiameter", m_dWheelDiameter);
@@ -317,27 +336,8 @@ public class DriveSystem extends Subsystem {
     	   }
     	return collisionDetected;
     }
-    
-   public void stayTrue(double throttle){
-	   ArcadeDrive(m_dSteeringHeading, throttle);
-	   
-   }
    
-   public void keepHeading() {
-	keepAngle.reset();
-   	navxGyro.zeroYaw();
-   	keepAngle.setInputRange(-180.0f, 180.0f);
-   	keepAngle.setOutputRange(-1.0, 1.0);
-   	keepAngle.setPID(m_dStraightP, m_dStraightI, m_dStraightD);
-   	keepAngle.setAbsoluteTolerance( m_iStraightError);
-   	keepAngle.setContinuous(true);
-   	keepAngle.setSetpoint(0.0);
-   	keepAngle.enable();
-   }
    
-   public void disableKeepAngle() {
-	   keepAngle.disable();
-   }
     
     public void logDashboard(double Y, double X){
     	

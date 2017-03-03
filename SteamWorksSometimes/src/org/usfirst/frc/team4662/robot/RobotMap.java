@@ -17,30 +17,36 @@ public class RobotMap {
 	// public static int rangefinderPort = 1;
 	// public static int rangefinderModule = 1;
 	
+	
+	//CAN
 	public static int leftMotor1;
 	public static int leftMotor2;
 	public static int rightMotor1;
 	public static int rightMotor2;
 	
+	//PWM
 	public static int ropeMotor1;
 	public static int ropeMotor2;
 	
-	public static int boilerLoaderMotor1;
+	public static int shooterMotor1;
 	public static int gateServo;
 	
 	public static int loaderMotor;
 		//not in init yet 
 	
 	public static void init(){
+		//CAN
 		leftMotor1 = 4;
 		leftMotor2 = 5;
 		rightMotor1 = 2;
 		rightMotor2 = 3;
 		
+		//PWM
 		ropeMotor1 = 0;
 		ropeMotor2 = 1;
 		
-		boilerLoaderMotor1 = 2;
+		shooterMotor1 = 2;
+			//previously boilerLoaderMotor1
 		gateServo = 3;
 		
 		loaderMotor = 4;

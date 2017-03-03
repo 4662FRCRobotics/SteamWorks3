@@ -7,23 +7,21 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class DriveStraight extends Command {
+public class LoaderUnload extends Command {
 
-    public DriveStraight() {
+    public LoaderUnload() {
         // Use requires() here to declare subsystem dependencies
-        requires(Robot.driveSystem);
+        // eg. requires(chassis);
+    	requires(Robot.loaderSystem);
     }
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	Robot.driveSystem.keepHeading();
     }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	double throttle = 2 / (Robot.oi.driveStick.getThrottle() + 3.0);
-    	Robot.driveSystem.stayTrue(Robot.oi.driveStick.getY() * throttle);
-    	//currently .5 to 1
+    	Robot.loaderSystem.loaderTakeItBackNowYall();
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -33,7 +31,7 @@ public class DriveStraight extends Command {
 
     // Called once after isFinished returns true
     protected void end() {
-    	Robot.driveSystem.disableKeepAngle();
+    	Robot.loaderSystem.loaderStop();
     }
 
     // Called when another command which requires one or more of the same

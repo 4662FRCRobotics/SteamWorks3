@@ -25,13 +25,13 @@ public class ShooterSystem extends Subsystem {
 	
 	public ShooterSystem() {
 		
-		Controller1 = new VictorSP(RobotMap.boilerLoaderMotor1);
+		Controller1 = new VictorSP(RobotMap.shooterMotor1);
 		
 		GateServo = new Servo(RobotMap.gateServo);
 		
-		m_dShooterSpeed = .7;
-		m_dServoAngleClosed = 0;
-		m_dServoAngleOpen = 90;
+		m_dShooterSpeed = -1.0;
+		m_dServoAngleClosed = 90;
+		m_dServoAngleOpen = 0;
 	}
 	
     public void initDefaultCommand() {

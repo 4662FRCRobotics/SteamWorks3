@@ -22,8 +22,8 @@ public class LoaderSystem extends Subsystem {
 	
 	public LoaderSystem() {
 		Controller1 = new TalonSRX(RobotMap.loaderMotor);
-		m_dLoadSpeed = .7;
-		m_dUnloadSpeed = .3;
+		m_dLoadSpeed = -1.0;
+		m_dUnloadSpeed = 0.2;
 	}
 	
     public void initDefaultCommand() {
@@ -45,7 +45,7 @@ public class LoaderSystem extends Subsystem {
     }
     
     public void loaderTakeItBackNowYall() {
-    	loaderLoad(-m_dUnloadSpeed);
+    	loaderLoad(m_dUnloadSpeed);
     }
     
     public double loaderSpeed() {

@@ -61,7 +61,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putData("Auto mode", chooser);
 		driveSystem.dashboardDisplay();
 		driveSystem.dashboardGyroDisplay();
-	
+		
+		boilerLoader.servoClose();
 
 	visionThread = new Thread(() -> {
 

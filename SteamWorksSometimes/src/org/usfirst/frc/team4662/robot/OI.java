@@ -42,22 +42,23 @@ public class OI {
 	
 	public Joystick driveStick = new Joystick(0);
 	public JoystickButton ToggleFront = new JoystickButton(driveStick,11); 
-	public JoystickButton Take5 = new JoystickButton(driveStick, 5);
+	//public JoystickButton Take5 = new JoystickButton(driveStick, 5);
 	public JoystickButton ToggleVision = new JoystickButton(driveStick, 7);
-	public JoystickButton Climb = new JoystickButton(driveStick, 3);
+	public JoystickButton Climb = new JoystickButton(driveStick, 8);
 	public JoystickButton Shoot = new JoystickButton(driveStick, 1);
-	public JoystickButton Load = new JoystickButton(driveStick, 6); 
-	public JoystickButton Unload = new JoystickButton(driveStick, 8); 
+	public JoystickButton Load = new JoystickButton(driveStick, 3); 
+	public JoystickButton Unload = new JoystickButton(driveStick, 4); 
 	public JoystickButton StayTrue = new JoystickButton(driveStick, 2);
 	
 	public OI()  {
 		
 		ToggleFront.whenPressed(new SwitchFront());	
-		Take5.whenPressed(new WaitForIt(5));
+		//Take5.whenPressed(new WaitForIt(5));
 		ToggleVision.whenPressed(new VisionToggle());
 		Climb.whileHeld(new ClimbRope());
 		Shoot.whileHeld(new BallShoot());
 		Load.whileHeld(new LoadLoad());
+		Unload.whileHeld(new LoaderUnload());
 		StayTrue.whileHeld(new DriveStraight());
 		
 		SmartDashboard.putData("InterruptPID", new InterruptPID());
