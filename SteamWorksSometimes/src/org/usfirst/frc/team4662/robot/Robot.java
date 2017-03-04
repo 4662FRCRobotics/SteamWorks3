@@ -93,7 +93,7 @@ public class Robot extends IterativeRobot {
 			//if toggleDrive
 			//unfinished
 			//toggleDrive is a Joystick button
-			if (!visionSystem.isGearForward()) {
+			if (!visionSystem.isGearForwardDrive()) {
 				cvSinkGear.setEnabled(false);
 				cvSinkShooter.setEnabled(true);
 				if(cvSinkShooter.grabFrame(mat) == 0) {

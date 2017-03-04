@@ -65,8 +65,9 @@ public class OI {
 		SmartDashboard.putData("DashboardDrivePID", new DashboardDriveDistancePID());
 		SmartDashboard.putData("DashboardGyroPID", new DashboardGyroRotatePID());
 		SmartDashboard.putData("ResetRightEncoder", new ResetRightEncoder());
+		SmartDashboard.putData("CameraFix", new CameraFix());
 	}
-
+	
 	private JoystickButton JoystickButton(Joystick driveStick2, int i) {
 		// TODO Auto-generated method stub
 		return null;

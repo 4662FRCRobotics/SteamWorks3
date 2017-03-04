@@ -9,13 +9,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class VisionSystem extends Subsystem {
 	private NetworkTable VisionTable;
-	private boolean m_bGearForward;
-	private boolean m_bIsVisionOn = false;
+	private boolean m_bGearForwardDrive;
+	private boolean m_bGearForwardVision;
+	private boolean m_bIsVisionOn;
 	
 	public VisionSystem() {
 		VisionTable = NetworkTable.getTable("Vision");
-		m_bGearForward = true;
-		m_bIsVisionOn = true;
+		m_bGearForwardDrive = true;
+		m_bGearForwardVision = true;
+		m_bIsVisionOn = false;
 	}
 
     // Put methods for controlling this subsystem
@@ -27,18 +29,26 @@ public class VisionSystem extends Subsystem {
     }
  
     public void toggleEnds(){
-    	m_bGearForward = !m_bGearForward;
-    	VisionTable.putBoolean("IsGearDrive", m_bGearForward);
+    	m_bGearForwardDrive = !m_bGearForwardDrive;
+       	m_bGearForwardVision = !m_bGearForwardVision;
+    	VisionTable.putBoolean("IsGearDrive", m_bGearForwardVision);
+    }
+    
+    public void cameraFix() {
+    	m_bGearForwardDrive = !m_bGearForwardDrive;
+    	VisionTable.putBoolean("IsGearDrive", m_bGearForwardVision);
     }
     
     public void GearCam(){
-    	m_bGearForward = true;
-    	VisionTable.putBoolean("IsGearDrive", m_bGearForward);
+    	m_bGearForwardDrive = true;
+    	m_bGearForwardVision = true;
+    	VisionTable.putBoolean("IsGearDrive", m_bGearForwardVision);
     }
     
     public void ShooterCam(){
-    	m_bGearForward = false;
-    	VisionTable.putBoolean("IsGearDrive", m_bGearForward);
+    	m_bGearForwardDrive = false;
+    	m_bGearForwardVision = false;
+    	VisionTable.putBoolean("IsGearDrive", m_bGearForwardVision);
     }
     
     public void isVisionOnToggle() {
@@ -48,13 +58,15 @@ public class VisionSystem extends Subsystem {
     }
     
     public boolean isVisionOn() {
-    	
     	return m_bIsVisionOn;
     }
     
-    public boolean isGearForward() {
-    	return m_bGearForward;
+    public boolean isGearForwardDrive() {
+    	return m_bGearForwardDrive;
     }
     
+    public boolean isGearForwardVision() {
+    	return m_bGearForwardVision;
+    }
 }
 
