@@ -48,7 +48,7 @@ public class OI {
 	public JoystickButton Shoot = new JoystickButton(driveStick, 1);
 	public JoystickButton Load = new JoystickButton(driveStick, 3); 
 	public JoystickButton Unload = new JoystickButton(driveStick, 4); 
-	public JoystickButton StayTrue = new JoystickButton(driveStick, 2);
+	public JoystickButton StayTrue = new JoystickButton(driveStick, 5);
 	
 	public OI()  {
 		
@@ -66,6 +66,7 @@ public class OI {
 		SmartDashboard.putData("DashboardGyroPID", new DashboardGyroRotatePID());
 		SmartDashboard.putData("ResetRightEncoder", new ResetRightEncoder());
 		SmartDashboard.putData("CameraFix", new CameraFix());
+		SmartDashboard.putData("TakePicture", new Snappy());
 	}
 	
 	private JoystickButton JoystickButton(Joystick driveStick2, int i) {

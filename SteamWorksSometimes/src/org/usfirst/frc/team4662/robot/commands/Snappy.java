@@ -1,15 +1,16 @@
 package org.usfirst.frc.team4662.robot.commands;
 
 import org.usfirst.frc.team4662.robot.Robot;
+import org.usfirst.frc.team4662.robot.subsystems.VisionSystem;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class CameraFix extends Command {
+public class Snappy extends Command {
 
-    public CameraFix() {
+    public Snappy() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.visionSystem);
@@ -21,7 +22,7 @@ public class CameraFix extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	Robot.visionSystem.cameraFix();
+    	Robot.visionSystem.takePic();
     }
 
     // Make this return true when this Command no longer needs to run execute()

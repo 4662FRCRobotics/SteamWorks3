@@ -153,6 +153,7 @@ public class DriveSystem extends Subsystem {
 		steamDrive.arcadeDrive(stickX, stickY);		
 		
 		logDashboard(stickY, stickX);
+		Robot.visionSystem.VisionNTDisplay();
 	}
 	
 	public void ToggleEnds()  {

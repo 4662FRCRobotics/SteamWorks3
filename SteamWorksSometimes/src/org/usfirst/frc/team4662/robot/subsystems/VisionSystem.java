@@ -13,11 +13,23 @@ public class VisionSystem extends Subsystem {
 	private boolean m_bGearForwardVision;
 	private boolean m_bIsVisionOn;
 	
+	private double r1PixelX;
+	private double r1PixelY;
+	private double r1PixelW;
+	private double r1PixelH;
+	private boolean m_bIsTargetFound;
+	
 	public VisionSystem() {
 		VisionTable = NetworkTable.getTable("Vision");
 		m_bGearForwardDrive = true;
 		m_bGearForwardVision = true;
 		m_bIsVisionOn = false;
+		
+		r1PixelX = -2;
+		r1PixelY = -2;
+		r1PixelW = -2;
+		r1PixelH = -2;
+		m_bIsTargetFound = true;
 	}
 
     // Put methods for controlling this subsystem
@@ -55,6 +67,24 @@ public class VisionSystem extends Subsystem {
     	m_bIsVisionOn = !m_bIsVisionOn;
     	SmartDashboard.putBoolean("IsVisionOn", m_bIsVisionOn);
     	VisionTable.putBoolean("IsVisionOn", m_bIsVisionOn);
+    }
+    
+    public void VisionNTDisplay() {
+    	m_bIsTargetFound = VisionTable.getBoolean("IsTargetFound", m_bIsTargetFound);
+    	r1PixelX = VisionTable.getNumber("Target1X", r1PixelX);
+    	r1PixelY = VisionTable.getNumber("Target1Y", r1PixelY);
+    	r1PixelW = VisionTable.getNumber("Target1Width", r1PixelW);
+    	r1PixelH = VisionTable.getNumber("Target1Height", r1PixelH);
+    	    	
+    	SmartDashboard.putBoolean("IsTargetFound", m_bIsTargetFound);
+    	SmartDashboard.putNumber("Target1X", r1PixelX);
+    	SmartDashboard.putNumber("Target1Y", r1PixelY);
+    	SmartDashboard.putNumber("Target1Width", r1PixelW);
+    	SmartDashboard.putNumber("Target1Height", r1PixelH);
+    }
+    
+    public void takePic() {
+    	VisionTable.putBoolean("Take Pic", true);
     }
     
     public boolean isVisionOn() {
