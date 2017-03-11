@@ -225,6 +225,7 @@ public class DriveSystem extends Subsystem {
     	driveDistance.setSetpoint(rotations);
     	m_dRotations = rotations;
     	driveDistance.enable();
+    	logDashboard(0,0);
     }
     
     public void disableEncoder () {
@@ -232,7 +233,8 @@ public class DriveSystem extends Subsystem {
     }
     
     public boolean encoderOnTarget() {
-		return driveDistance.onTarget() || isBumped();
+		return driveDistance.onTarget();
+		//return driveDistance.onTarget() || isBumped();//
     }
     
     public void resetRightEncoder() {
@@ -344,26 +346,26 @@ public class DriveSystem extends Subsystem {
     	
     	SmartDashboard.putNumber("DriverStickY", Y);
     	SmartDashboard.putNumber("DriverStickX", X);
-    	SmartDashboard.putNumber("Left1Temp", ControllerLeft1.getTemperature());
-    	SmartDashboard.putNumber("Left1Amps", ControllerLeft1.getOutputCurrent());
-    	SmartDashboard.putNumber("Left1VFactor", ControllerLeft1.getOutputVoltage()/ControllerLeft1.getBusVoltage());
-    	SmartDashboard.putNumber("LeftVBus", ControllerLeft1.getBusVoltage());
-    	SmartDashboard.putNumber("LeftVOut", ControllerLeft1.getOutputVoltage());
+    	//SmartDashboard.putNumber("Left1Temp", ControllerLeft1.getTemperature());
+    	//SmartDashboard.putNumber("Left1Amps", ControllerLeft1.getOutputCurrent());
+    	//SmartDashboard.putNumber("Left1VFactor", ControllerLeft1.getOutputVoltage()/ControllerLeft1.getBusVoltage());
+    	//SmartDashboard.putNumber("LeftVBus", ControllerLeft1.getBusVoltage());
+    	//SmartDashboard.putNumber("LeftVOut", ControllerLeft1.getOutputVoltage());
     	
     	
-    	SmartDashboard.putNumber("Right1Temp", ControllerRight1.getTemperature());
-    	SmartDashboard.putNumber("Right1Amps", ControllerRight1.getOutputCurrent());
+    	//SmartDashboard.putNumber("Right1Temp", ControllerRight1.getTemperature());
+    	//SmartDashboard.putNumber("Right1Amps", ControllerRight1.getOutputCurrent());
     	SmartDashboard.putNumber("Right1Encoder", ControllerRight1.getSpeed());
     	SmartDashboard.putNumber("RightEncoderPos", ControllerRight1.getPosition());
     	SmartDashboard.putNumber("DriveYToggle", m_dThrottleDirection);
     	SmartDashboard.putNumber("GyroAngle", navxGyro.getAngle());
     	
-    	SmartDashboard.putNumber("lastLinearAccelX", navxGyro.getWorldLinearAccelX());
-    	SmartDashboard.putNumber("lastLinearAccelY", navxGyro.getWorldLinearAccelY());
+    	//SmartDashboard.putNumber("lastLinearAccelX", navxGyro.getWorldLinearAccelX());
+    	//SmartDashboard.putNumber("lastLinearAccelY", navxGyro.getWorldLinearAccelY());
     	
-    	SmartDashboard.putNumber("X Displacement", navxGyro.getDisplacementX());
-    	SmartDashboard.putNumber("Y Displacement", navxGyro.getDisplacementY());
-    	SmartDashboard.putNumber("Z Displacement", navxGyro.getDisplacementZ());
+    	//SmartDashboard.putNumber("X Displacement", navxGyro.getDisplacementX());
+    	//SmartDashboard.putNumber("Y Displacement", navxGyro.getDisplacementY());
+    	//SmartDashboard.putNumber("Z Displacement", navxGyro.getDisplacementZ());
     	
     	SmartDashboard.putNumber("Jerk X Value", currentJerkX);
     	SmartDashboard.putNumber("Jerk Y Value", currentJerkY);

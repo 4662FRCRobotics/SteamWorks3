@@ -51,7 +51,6 @@ public class OI {
 	public JoystickButton StayTrue = new JoystickButton(driveStick, 5);
 	
 	public OI()  {
-		
 		ToggleFront.whenPressed(new SwitchFront());	
 		//Take5.whenPressed(new WaitForIt(5));
 		ToggleVision.whenPressed(new VisionToggle());
