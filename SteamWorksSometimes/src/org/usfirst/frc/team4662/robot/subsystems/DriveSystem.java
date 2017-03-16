@@ -6,6 +6,7 @@ import org.usfirst.frc.team4662.robot.commands.ArcadeDrive;
 import com.ctre.CANTalon;
 import com.ctre.CANTalon.FeedbackDevice;
 
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SPI;
@@ -102,9 +103,11 @@ public class DriveSystem extends Subsystem {
 
 		// new device and inverted needs validation 2/18 TRO
 		ControllerRight1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+		ControllerLeft1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
 		//ControllerRight1.reverseOutput(true);
 		//ControllerRight1.reverseSensor(true);
 		ControllerRight1.configEncoderCodesPerRev(1);
+		ControllerLeft1.configEncoderCodesPerRev(1);
 		
 		ControllerLeft1.enable();
 		ControllerRight1.enable();
@@ -141,6 +144,12 @@ public class DriveSystem extends Subsystem {
 		
 		navxGyro = new AHRS(SPI.Port.kMXP);
 		
+		SmartDashboard.putNumber("GyroAngle", navxGyro.getAngle());
+		
+		if(!navxGyro.isConnected()){
+			navxGyro = new AHRS(I2C.Port.kOnboard);
+		}
+		
 		kCollisionThreshold_DeltaG = 0.5f;
 		
 		m_dSteeringHeading = 0;
@@ -159,7 +168,7 @@ public class DriveSystem extends Subsystem {
 	public void ToggleEnds()  {
 		ArcadeDrive(0,0);
 		m_bThrottleSwitch = false;
-		if (ControllerRight1.getSpeed() > -5 && ControllerRight1.getSpeed() < 5 ) {
+		if (ControllerLeft1.getSpeed() > -5 && ControllerLeft1.getSpeed() < 5 ) {
 			m_dThrottleDirection = m_dThrottleDirection * -1;
 			m_bThrottleSwitch = true;
 		}
@@ -168,7 +177,7 @@ public class DriveSystem extends Subsystem {
 	public void GearForward()  {
 		ArcadeDrive(0,0);
 		m_bThrottleSwitch = false;
-		if (ControllerRight1.getSpeed() > -5 && ControllerRight1.getSpeed() < 5 ) {
+		if (ControllerLeft1.getSpeed() > -5 && ControllerLeft1.getSpeed() < 5 ) {
 			m_dThrottleDirection = 1;
 			m_bThrottleSwitch = true;
 		}
@@ -178,7 +187,7 @@ public class DriveSystem extends Subsystem {
 	public void ShooterForward()  {
 		ArcadeDrive(0,0);
 		m_bThrottleSwitch = false;
-		if (ControllerRight1.getSpeed() > -5 && ControllerRight1.getSpeed() < 5 ) {
+		if (ControllerLeft1.getSpeed() > -5 && ControllerLeft1.getSpeed() < 5 ) {
 			m_dThrottleDirection = -1;
 			m_bThrottleSwitch = true;
 		}
@@ -218,7 +227,7 @@ public class DriveSystem extends Subsystem {
     //	m_dDistance = distance;
     	double rotations = distance / (m_dWheelDiameter * Math.PI) * m_dEncoderPulseCnt;
     	driveDistance.setAbsoluteTolerance(m_iDriveError);
-    	ControllerRight1.setPosition(0.0);
+    	ControllerLeft1.setPosition(0.0);
     	driveDistance.setInputRange(-Math.abs(rotations) * 1.5, Math.abs(rotations) * 1.5);
     	driveDistance.setOutputRange(-throttle, throttle);
     	driveDistance.setPID(m_dDriveP, m_dDriveI, m_dDriveD);
@@ -239,6 +248,10 @@ public class DriveSystem extends Subsystem {
     
     public void resetRightEncoder() {
     	ControllerRight1.setPosition(0.0);
+    }
+    
+    public void resetLeftEncoder() {
+    	ControllerLeft1.setPosition(0.0);
     }
     
     public double getGyroAngle() {
@@ -357,8 +370,11 @@ public class DriveSystem extends Subsystem {
     	//SmartDashboard.putNumber("Right1Amps", ControllerRight1.getOutputCurrent());
     	SmartDashboard.putNumber("Right1Encoder", ControllerRight1.getSpeed());
     	SmartDashboard.putNumber("RightEncoderPos", ControllerRight1.getPosition());
+    	SmartDashboard.putNumber("Left1Encoder", ControllerLeft1.getSpeed());
+    	SmartDashboard.putNumber("LeftEncoderPos", ControllerLeft1.getPosition());
     	SmartDashboard.putNumber("DriveYToggle", m_dThrottleDirection);
     	SmartDashboard.putNumber("GyroAngle", navxGyro.getAngle());
+    	SmartDashboard.putBoolean("IsNavXOn", navxGyro.isConnected());
     	
     	//SmartDashboard.putNumber("lastLinearAccelX", navxGyro.getWorldLinearAccelX());
     	//SmartDashboard.putNumber("lastLinearAccelY", navxGyro.getWorldLinearAccelY());
@@ -388,7 +404,7 @@ public class DriveSystem extends Subsystem {
 		@Override
 		public double pidGet() {
 			// TODO Auto-generated method stub
-			return ControllerRight1.getPosition();
+			return ControllerLeft1.getPosition();
 		}
     	
     }
