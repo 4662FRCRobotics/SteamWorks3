@@ -63,7 +63,7 @@ public class OI {
 		SmartDashboard.putData("InterruptPID", new InterruptPID());
 		SmartDashboard.putData("DashboardDrivePID", new DashboardDriveDistancePID());
 		SmartDashboard.putData("DashboardGyroPID", new DashboardGyroRotatePID());
-		SmartDashboard.putData("ResetRightEncoder", new ResetRightEncoder());
+		SmartDashboard.putData("ResetBothEncoder", new ResetBothEncoder());
 		SmartDashboard.putData("CameraFix", new CameraFix());
 		SmartDashboard.putData("TakePicture", new Snappy());
 	}

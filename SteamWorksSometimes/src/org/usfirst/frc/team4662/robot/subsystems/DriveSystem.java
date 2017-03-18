@@ -88,6 +88,7 @@ public class DriveSystem extends Subsystem {
 		ControllerRight1 = new CANTalon(RobotMap.rightMotor1);
 		ControllerRight2 = new CANTalon(RobotMap.rightMotor2);
 		ControllerRight1.setInverted(true);
+		ControllerRight1.reverseSensor(true);
 		
 		ControllerLeft2.changeControlMode(CANTalon.TalonControlMode.Follower); //makes the controllers followers
 		ControllerRight2.changeControlMode(CANTalon.TalonControlMode.Follower);
@@ -219,22 +220,27 @@ public class DriveSystem extends Subsystem {
     }
     
     public void initEncoder (double distance){
-    	initEncoder(distance, 1.0);    	
+    	initEncoder(distance, .75);    	
     }
     
     public void initEncoder (double distance, double throttle){
     	driveDistance.reset();
+    	resetRightEncoder();
+    	resetLeftEncoder();
     //	m_dDistance = distance;
-    	double rotations = distance / (m_dWheelDiameter * Math.PI) * m_dEncoderPulseCnt;
+    	//Correct for gear forward; positive distance is relatively forward
+    	double rotations = -(m_dThrottleDirection) * (distance / (m_dWheelDiameter * Math.PI) * m_dEncoderPulseCnt);
     	driveDistance.setAbsoluteTolerance(m_iDriveError);
     	ControllerLeft1.setPosition(0.0);
+    	ControllerRight1.setPosition(0.0);
     	driveDistance.setInputRange(-Math.abs(rotations) * 1.5, Math.abs(rotations) * 1.5);
     	driveDistance.setOutputRange(-throttle, throttle);
     	driveDistance.setPID(m_dDriveP, m_dDriveI, m_dDriveD);
     	driveDistance.setSetpoint(rotations);
     	m_dRotations = rotations;
     	driveDistance.enable();
-    	logDashboard(0,0);
+    	//logDashboard(0,0);
+    	dashboardDisplay();
     }
     
     public void disableEncoder () {
@@ -368,9 +374,9 @@ public class DriveSystem extends Subsystem {
     	
     	//SmartDashboard.putNumber("Right1Temp", ControllerRight1.getTemperature());
     	//SmartDashboard.putNumber("Right1Amps", ControllerRight1.getOutputCurrent());
-    	SmartDashboard.putNumber("Right1Encoder", ControllerRight1.getSpeed());
+    	SmartDashboard.putNumber("Right1EncoderSpeed", ControllerRight1.getSpeed());
     	SmartDashboard.putNumber("RightEncoderPos", ControllerRight1.getPosition());
-    	SmartDashboard.putNumber("Left1Encoder", ControllerLeft1.getSpeed());
+    	SmartDashboard.putNumber("Left1EncoderSpeed", ControllerLeft1.getSpeed());
     	SmartDashboard.putNumber("LeftEncoderPos", ControllerLeft1.getPosition());
     	SmartDashboard.putNumber("DriveYToggle", m_dThrottleDirection);
     	SmartDashboard.putNumber("GyroAngle", navxGyro.getAngle());
