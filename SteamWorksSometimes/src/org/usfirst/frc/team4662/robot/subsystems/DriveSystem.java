@@ -127,17 +127,17 @@ public class DriveSystem extends Subsystem {
 		
 		m_dWheelDiameter = 4.0;
 		m_dEncoderPulseCnt = 1024;
-		m_dDriveP = 0.2;
-		m_dDriveI = 0.0;
+		m_dDriveP = 0.005;
+		m_dDriveI = 0.15;
 		m_dDriveD = 0.0;
-		m_iDriveError = 20;
+		m_iDriveError = 80;
 		
 		m_dGyroP = 0.7;
 		m_dGyroI = 0.0;
 		m_dGyroD = 0.0;
 		m_iGyroError = 2;
 		
-		m_dStraightP = 0.2;
+		m_dStraightP = 0.005;
 		m_dStraightI = 0.0;
 		m_dStraightD = 0.0;
 		m_iStraightError = 1;

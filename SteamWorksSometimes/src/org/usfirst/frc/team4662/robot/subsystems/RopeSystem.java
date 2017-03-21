@@ -24,7 +24,7 @@ public class RopeSystem extends Subsystem {
 		Controller1 = new VictorSP(RobotMap.ropeMotor1);
 		Controller2 = new VictorSP(RobotMap.ropeMotor2);
 		
-		m_dClimbSpeed = -.5;
+		m_dClimbSpeed = -0.5;
 	}
 	
     public void initDefaultCommand() {
