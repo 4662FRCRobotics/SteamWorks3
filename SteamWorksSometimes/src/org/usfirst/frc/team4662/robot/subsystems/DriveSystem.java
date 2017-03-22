@@ -127,14 +127,14 @@ public class DriveSystem extends Subsystem {
 		
 		m_dWheelDiameter = 4.0;
 		m_dEncoderPulseCnt = 1024;
-		m_dDriveP = 0.005;
-		m_dDriveI = 0.15;
-		m_dDriveD = 0.0;
+		m_dDriveP = 0.17;
+		m_dDriveI = 0.1;
+		m_dDriveD = 0.06;
 		m_iDriveError = 80;
 		
-		m_dGyroP = 0.7;
-		m_dGyroI = 0.0;
-		m_dGyroD = 0.0;
+		m_dGyroP = 0.2;
+		m_dGyroI = 0.4;
+		m_dGyroD = 0.4;
 		m_iGyroError = 2;
 		
 		m_dStraightP = 0.005;
@@ -273,7 +273,7 @@ public class DriveSystem extends Subsystem {
     	turnToAngle.reset();
     	navxGyro.zeroYaw();
     	turnToAngle.setInputRange(-180.0f, 180.0f);
-    	turnToAngle.setOutputRange(-1.0, 1.0);
+    	turnToAngle.setOutputRange(-0.7, 0.7);
     	turnToAngle.setPID(m_dGyroP, m_dGyroI, m_dGyroD);
     	turnToAngle.setAbsoluteTolerance( m_iGyroError);
     	turnToAngle.setContinuous(true);
