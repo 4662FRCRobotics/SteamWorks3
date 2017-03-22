@@ -147,10 +147,10 @@ public class DriveSystem extends Subsystem {
 		
 		SmartDashboard.putNumber("GyroAngle", navxGyro.getAngle());
 		
-		if(!navxGyro.isConnected()){
+		/*if(!navxGyro.isConnected()){
 			navxGyro = new AHRS(I2C.Port.kOnboard);
 		}
-		
+		*/
 		kCollisionThreshold_DeltaG = 0.5f;
 		
 		m_dSteeringHeading = 0;

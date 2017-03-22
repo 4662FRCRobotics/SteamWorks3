@@ -19,9 +19,9 @@ public class VisionSystem extends Subsystem {
 	private double m_dR1PixelH;
 	private boolean m_bIsTargetFound;
 	private final double BOILER_VERTICAL_MIDPOINT = 83;
-	private final double BOILER_SHOOT_SWEETSPOT_DISTANCE = 60;
-	private final double BOILER_CAMERA_VERTICAL_OFFSET = 54;
-	private final double BOILER_CAMERA_VERTICAL_ANGLE = 29;
+	private final double BOILER_SHOOT_SWEETSPOT_DISTANCE = 72;
+	private final double BOILER_CAMERA_VERTICAL_OFFSET = 11.5;
+	private final double BOILER_CAMERA_VERTICAL_ANGLE = 36;
 	private final double BOILER_CAMERA_HORIZONTAL_OFFSET = 0;
 	private final double BOILER_CAMERA_HORIZONTAL_ANGLE = 0;
 	private final double BOILER_CAMERA_FOV_X = 50.2;
@@ -139,5 +139,12 @@ public class VisionSystem extends Subsystem {
     	double targetTangent = Math.tan(Math.toRadians(targetAngle));
     	double targetDistance = (BOILER_VERTICAL_MIDPOINT - BOILER_CAMERA_VERTICAL_OFFSET) / targetTangent;
     	return targetDistance - BOILER_SHOOT_SWEETSPOT_DISTANCE;
+    }
+    
+    public double getGearAngle() {
+    	double midpoint = m_dR1PixelX + (m_dR1PixelW/2);
+    	double midpointRatio = (midpoint - (BOILER_CAMERA_RES_X / 2)) / (BOILER_CAMERA_RES_X / 2);
+    	double cameraAngle = midpointRatio * (BOILER_CAMERA_FOV_X / 2); 
+    	return cameraAngle + BOILER_CAMERA_HORIZONTAL_ANGLE ;
     }
 }
