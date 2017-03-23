@@ -85,6 +85,7 @@ public class DriveSystem extends Subsystem {
 		ControllerLeft1 = new CANTalon(RobotMap.leftMotor1);
 		ControllerLeft2 = new CANTalon(RobotMap.leftMotor2);
 		ControllerLeft1.setInverted(false);
+		ControllerLeft1.reverseSensor(false);
 		ControllerRight1 = new CANTalon(RobotMap.rightMotor1);
 		ControllerRight2 = new CANTalon(RobotMap.rightMotor2);
 		ControllerRight1.setInverted(true);
@@ -172,6 +173,13 @@ public class DriveSystem extends Subsystem {
 		if (ControllerLeft1.getSpeed() > -5 && ControllerLeft1.getSpeed() < 5 ) {
 			m_dThrottleDirection = m_dThrottleDirection * -1;
 			m_bThrottleSwitch = true;
+			if (m_dThrottleDirection == 1 ){
+				ControllerLeft1.reverseSensor(false);
+				ControllerRight1.reverseSensor(true);
+			} else {
+				ControllerLeft1.reverseSensor(true);
+				ControllerRight1.reverseSensor(false);
+			}
 		}
 	}
 	
@@ -181,16 +189,19 @@ public class DriveSystem extends Subsystem {
 		if (ControllerLeft1.getSpeed() > -5 && ControllerLeft1.getSpeed() < 5 ) {
 			m_dThrottleDirection = 1;
 			m_bThrottleSwitch = true;
+			ControllerLeft1.reverseSensor(false);
+			ControllerRight1.reverseSensor(true);
 		}
 	}
-	
-	
+
 	public void ShooterForward()  {
 		ArcadeDrive(0,0);
 		m_bThrottleSwitch = false;
 		if (ControllerLeft1.getSpeed() > -5 && ControllerLeft1.getSpeed() < 5 ) {
 			m_dThrottleDirection = -1;
 			m_bThrottleSwitch = true;
+			ControllerLeft1.reverseSensor(true);
+			ControllerRight1.reverseSensor(false);
 		}
 	}
 	
@@ -202,6 +213,10 @@ public class DriveSystem extends Subsystem {
         // Set the default command for a subsystem here.
         //setDefaultCommand(new MySpecialCommand());
     	setDefaultCommand(new ArcadeDrive());
+    }
+    
+    public void initTeleop() {
+    	steamDrive.setSafetyEnabled(true);
     }
     
     public void initJoystickDrive() {
@@ -220,7 +235,7 @@ public class DriveSystem extends Subsystem {
     }
     
     public void initEncoder (double distance){
-    	initEncoder(distance, .75);    	
+    	initEncoder(distance, .5);    	
     }
     
     public void initEncoder (double distance, double throttle){
@@ -229,7 +244,7 @@ public class DriveSystem extends Subsystem {
     	resetLeftEncoder();
     //	m_dDistance = distance;
     	//Correct for gear forward; positive distance is relatively forward
-    	double rotations = -(m_dThrottleDirection) * (distance / (m_dWheelDiameter * Math.PI) * m_dEncoderPulseCnt);
+    	double rotations = -(distance / (m_dWheelDiameter * Math.PI) * m_dEncoderPulseCnt);
     	driveDistance.setAbsoluteTolerance(m_iDriveError);
     	ControllerLeft1.setPosition(0.0);
     	ControllerRight1.setPosition(0.0);
@@ -273,7 +288,7 @@ public class DriveSystem extends Subsystem {
     	turnToAngle.reset();
     	navxGyro.zeroYaw();
     	turnToAngle.setInputRange(-180.0f, 180.0f);
-    	turnToAngle.setOutputRange(-0.7, 0.7);
+    	turnToAngle.setOutputRange(-0.5, 0.5);
     	turnToAngle.setPID(m_dGyroP, m_dGyroI, m_dGyroD);
     	turnToAngle.setAbsoluteTolerance( m_iGyroError);
     	turnToAngle.setContinuous(true);

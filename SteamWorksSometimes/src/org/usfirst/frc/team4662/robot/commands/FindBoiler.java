@@ -39,7 +39,6 @@ public class FindBoiler extends Command {
     		Command commandGroup = (Command) new MoveToBoilerGroup();
     		commandGroup.start();
     	}
-    	Robot.visionSystem.LightOff();
     }
 
     // Called when another command which requires one or more of the same

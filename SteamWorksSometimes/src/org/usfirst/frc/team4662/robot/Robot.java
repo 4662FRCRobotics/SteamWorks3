@@ -111,8 +111,8 @@ public class Robot extends IterativeRobot {
 				}
 			}
 			// Put a rectangle on the image
-			Imgproc.rectangle(mat, new Point(60, 40), new Point(260, 200),
-					new Scalar(255, 255, 255), 5);
+			//Imgproc.rectangle(mat, new Point(60, 40), new Point(260, 200),
+					//new Scalar(255, 255, 255), 5);
 			outputStream.putFrame(mat);
 		}
 	});
@@ -179,6 +179,7 @@ public class Robot extends IterativeRobot {
 		// this line or comment it out.
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
+		driveSystem.initTeleop();
 	}
 
 	/**

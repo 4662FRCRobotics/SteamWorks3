@@ -67,12 +67,12 @@ public class Autonomous extends CommandGroup {
 	    			case "forward": 
 	    	    		dDistance = Double.valueOf(autoArray[i + 1]);
 	    	    		SmartDashboard.putNumber("FDistance", dDistance);
-	    				addSequential (new DriveDistancePID(-dDistance, dSpeed));
+	    				addSequential (new DriveDistancePID(dDistance, dSpeed));
 	    				break;
 	    			case "reverse": 
 	    	    		dDistance = Double.valueOf(autoArray[i + 1]);
 	    	    		SmartDashboard.putNumber("RDistance", dDistance);
-	    				addSequential (new DriveDistancePID(dDistance, dSpeed));
+	    				addSequential (new DriveDistancePID(-dDistance, dSpeed));
 	    				break;
 	    			case "rotate":
 	    	    		dAngle = Integer.valueOf(autoArray[i + 1]);

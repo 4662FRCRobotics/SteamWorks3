@@ -33,6 +33,7 @@ public class MoveToBoilerGroup extends CommandGroup {
     	
     	addSequential(new GyroRotatePID(Robot.visionSystem.getBoilerAngle()));
     	addSequential(new DriveDistancePID(Robot.visionSystem.getBoilerDistance(), .5));
+    	Robot.visionSystem.LightOff();
     	//addSequential(new BallShoot(5));
     }
 }
