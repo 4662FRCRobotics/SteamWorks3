@@ -263,8 +263,8 @@ public class DriveSystem extends Subsystem {
     }
     
     public boolean encoderOnTarget() {
-		return driveDistance.onTarget();
-		//return driveDistance.onTarget() || isBumped();//
+		//return driveDistance.onTarget();
+		return driveDistance.onTarget() || isBumped();//
     }
     
     public void resetRightEncoder() {
