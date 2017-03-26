@@ -235,7 +235,7 @@ public class DriveSystem extends Subsystem {
     }
     
     public void initEncoder (double distance){
-    	initEncoder(distance, .5);    	
+    	initEncoder(distance, .8);    	
     }
     
     public void initEncoder (double distance, double throttle){
@@ -263,8 +263,8 @@ public class DriveSystem extends Subsystem {
     }
     
     public boolean encoderOnTarget() {
-		//return driveDistance.onTarget();
-		return driveDistance.onTarget() || isBumped();//
+		return driveDistance.onTarget();
+		//return driveDistance.onTarget() || isBumped();
     }
     
     public void resetRightEncoder() {

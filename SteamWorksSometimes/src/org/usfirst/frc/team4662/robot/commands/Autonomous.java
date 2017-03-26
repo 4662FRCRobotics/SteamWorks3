@@ -100,7 +100,7 @@ public class Autonomous extends CommandGroup {
 	    			case "findandshoot":
 	    				dTimeOutVal = Double.valueOf(autoArray[i + 1]);
 	    				addSequential (new FindBoiler());
-	    				addSequential (new BallShoot(dTimeOutVal));
+	    				//addSequential (new BallShoot(dTimeOutVal));
 	    				break;
 	    			case "wait":
 	    				dWaitDuration = Double.valueOf(autoArray [i + 1]);

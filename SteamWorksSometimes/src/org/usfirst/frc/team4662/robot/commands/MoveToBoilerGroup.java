@@ -29,11 +29,11 @@ public class MoveToBoilerGroup extends CommandGroup {
     	
     	requires(Robot.visionSystem);
     	requires(Robot.driveSystem);
-    	//requires(Robot.boilerLoader);
+    	requires(Robot.boilerLoader);
     	
     	addSequential(new GyroRotatePID(Robot.visionSystem.getBoilerAngle()));
-    	addSequential(new DriveDistancePID(Robot.visionSystem.getBoilerDistance(), .5));
+    	addSequential(new DriveDistancePID(Robot.visionSystem.getBoilerDistance(), .4));
     	Robot.visionSystem.LightOff();
-    	//addSequential(new BallShoot(5));
+    	addSequential(new BallShoot(8));
     }
 }

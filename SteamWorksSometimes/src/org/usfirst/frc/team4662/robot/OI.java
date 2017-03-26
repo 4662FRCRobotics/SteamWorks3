@@ -44,7 +44,7 @@ public class OI {
 	public JoystickButton ToggleFront = new JoystickButton(driveStick,11); 
 	//public JoystickButton Take5 = new JoystickButton(driveStick, 5);
 	public JoystickButton ToggleVision = new JoystickButton(driveStick, 7);
-	public JoystickButton Climb = new JoystickButton(driveStick, 8);
+	public JoystickButton Climb = new JoystickButton(driveStick, 2);
 	public JoystickButton Shoot = new JoystickButton(driveStick, 1);
 	public JoystickButton Load = new JoystickButton(driveStick, 3); 
 	public JoystickButton Unload = new JoystickButton(driveStick, 4); 
