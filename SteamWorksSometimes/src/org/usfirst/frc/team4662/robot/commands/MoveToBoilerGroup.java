@@ -9,7 +9,9 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
  */
 public class MoveToBoilerGroup extends CommandGroup {
 
-    public MoveToBoilerGroup() {
+	private double m_dSpeed;
+	
+    public MoveToBoilerGroup(double speed) {
         // Add Commands here:
         // e.g. addSequential(new Command1());
         //      addSequential(new Command2());
@@ -31,8 +33,10 @@ public class MoveToBoilerGroup extends CommandGroup {
     	requires(Robot.driveSystem);
     	requires(Robot.boilerLoader);
     	
-    	addSequential(new GyroRotatePID(Robot.visionSystem.getBoilerAngle()));
-    	addSequential(new DriveDistancePID(Robot.visionSystem.getBoilerDistance(), .4));
+    	m_dSpeed = speed;
+    	
+    	addSequential(new GyroRotatePID(Robot.visionSystem.getBoilerAngle(), m_dSpeed));
+    	addSequential(new DriveDistancePID(Robot.visionSystem.getBoilerDistance(), m_dSpeed));
     	Robot.visionSystem.LightOff();
     	addSequential(new BallShoot(8));
     }

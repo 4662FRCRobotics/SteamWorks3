@@ -1,5 +1,6 @@
 package org.usfirst.frc.team4662.robot.subsystems;
 
+import org.usfirst.frc.team4662.robot.Robot;
 import org.usfirst.frc.team4662.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.SpeedController;
@@ -17,6 +18,8 @@ public class RopeSystem extends Subsystem {
 	private SpeedController Controller1;
 	private SpeedController Controller2;
 	
+	private final double FORWARD = -1;
+	private final double CLIMB_SPEED = 0.7;
 	private double m_dClimbSpeed;
 	
 	public RopeSystem() {
@@ -24,7 +27,7 @@ public class RopeSystem extends Subsystem {
 		Controller1 = new VictorSP(RobotMap.ropeMotor1);
 		Controller2 = new VictorSP(RobotMap.ropeMotor2);
 		
-		m_dClimbSpeed = -0.5;
+		m_dClimbSpeed = Math.abs(CLIMB_SPEED) * FORWARD;
 	}
 	
     public void initDefaultCommand() {
@@ -41,7 +44,8 @@ public class RopeSystem extends Subsystem {
     }
     
     public void ropeClimb() {
-    	ropeDrive(m_dClimbSpeed);
+    	double throttle = 2 / (Robot.oi.driveStick.getThrottle() + 3.0);
+    	ropeDrive(m_dClimbSpeed * throttle);
     }
     
     public void ropeStop() {

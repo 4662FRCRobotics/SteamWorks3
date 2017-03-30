@@ -79,6 +79,7 @@ public class DriveSystem extends Subsystem {
 	private double currentJerkY;
 	
 	private volatile double m_dSteeringHeading; 
+	private final double DEFAULT_THROTTLE = .6;
 	
 	public DriveSystem(){
 		
@@ -104,12 +105,12 @@ public class DriveSystem extends Subsystem {
 		ControllerRight1.configPeakOutputVoltage(+4f, -4f);
 
 		// new device and inverted needs validation 2/18 TRO
-		ControllerRight1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
-		ControllerLeft1.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+		ControllerRight1.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+		ControllerLeft1.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
 		//ControllerRight1.reverseOutput(true);
 		//ControllerRight1.reverseSensor(true);
-		ControllerRight1.configEncoderCodesPerRev(1);
-		ControllerLeft1.configEncoderCodesPerRev(1);
+		//ControllerRight1.configEncoderCodesPerRev(1);
+		//ControllerLeft1.configEncoderCodesPerRev(1);
 		
 		ControllerLeft1.enable();
 		ControllerRight1.enable();
@@ -127,20 +128,20 @@ public class DriveSystem extends Subsystem {
 		m_dJoystickVolts = 8.0;
 		
 		m_dWheelDiameter = 4.0;
-		m_dEncoderPulseCnt = 1024;
-		m_dDriveP = 0.17;
-		m_dDriveI = 0.1;
-		m_dDriveD = 0.06;
-		m_iDriveError = 80;
+		m_dEncoderPulseCnt = 1;
+		m_dDriveP = 0.3;
+		m_dDriveI = 0.0;
+		m_dDriveD = 0.1;
+		m_iDriveError = 1;
 		
 		m_dGyroP = 0.2;
 		m_dGyroI = 0.4;
 		m_dGyroD = 0.4;
 		m_iGyroError = 2;
 		
-		m_dStraightP = 0.005;
+		m_dStraightP = 0.3;
 		m_dStraightI = 0.0;
-		m_dStraightD = 0.0;
+		m_dStraightD = 0.4;
 		m_iStraightError = 1;
 		turnToAngle = new PIDController(0.0, 0.0, 0.0, new getAngle(), new turnAngle());
 		
@@ -159,6 +160,8 @@ public class DriveSystem extends Subsystem {
 	}
 	
 	public void ArcadeDrive(double stickX, double stickY){
+		//1st one direction, rotation, pos when clockwise, usually z axis 
+		//2nd one throttle, determines sign
 		stickY = stickY * m_dThrottleDirection;
 //		stickX = stickX * m_dThrottleDirection; tried this and it is backwards when reversed 
 		steamDrive.arcadeDrive(stickX, stickY);		
@@ -235,7 +238,7 @@ public class DriveSystem extends Subsystem {
     }
     
     public void initEncoder (double distance){
-    	initEncoder(distance, .8);    	
+    	initEncoder(distance, DEFAULT_THROTTLE);    	
     }
     
     public void initEncoder (double distance, double throttle){
@@ -285,15 +288,23 @@ public class DriveSystem extends Subsystem {
     }
     
     public void turnToAngle(double angle) {
+    	turnToAngle(angle, DEFAULT_THROTTLE);
+    }
+    
+    public void turnToAngle(double angle, double throttle) {
     	turnToAngle.reset();
     	navxGyro.zeroYaw();
     	turnToAngle.setInputRange(-180.0f, 180.0f);
-    	turnToAngle.setOutputRange(-0.5, 0.5);
+    	turnToAngle.setOutputRange(-throttle, throttle);
     	turnToAngle.setPID(m_dGyroP, m_dGyroI, m_dGyroD);
     	turnToAngle.setAbsoluteTolerance( m_iGyroError);
     	turnToAngle.setContinuous(true);
     	turnToAngle.setSetpoint(angle);
     	turnToAngle.enable();
+    }
+    
+    public void resetGyro(){
+    	navxGyro.zeroYaw();
     }
     
     public void stayTrue(double throttle){

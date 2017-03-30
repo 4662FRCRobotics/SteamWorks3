@@ -34,10 +34,12 @@ public class Autonomous extends CommandGroup {
     public Autonomous() {
     	requires (Robot.driveSystem);
     	double dDistance = 0;
-    	double dSpeed = 1.0;
-    	double dWaitDuration = 0;
+    	double dSpeed = 0.6;
+    	double dWaitDuration = 2;
     	double dAngle = 0;
     	double dTimeOutVal = 1.5;
+    	double dMomentumThreshold = 120; 
+    	
     	//Preferences prefs = Preferences.getInstance();
     	SmartDashboard.putString("AutoCommandGroup", "Start");
     	
@@ -58,7 +60,7 @@ public class Autonomous extends CommandGroup {
 	    		//node = nlAutoAttacks.item(i);
 	    		//String strAutoCommand = node.getNodeName();
 	    		String strAutoCommand = autoArray[i];
-	    		SmartDashboard.putString("Direction", strAutoCommand);
+	    		//SmartDashboard.putString("Direction", strAutoCommand);
 	    		switch (strAutoCommand) {
 	    			case "throttle":
 	    				dSpeed = Double.valueOf(autoArray[i + 1]);
@@ -66,18 +68,35 @@ public class Autonomous extends CommandGroup {
 	    				break;
 	    			case "forward": 
 	    	    		dDistance = Double.valueOf(autoArray[i + 1]);
-	    	    		SmartDashboard.putNumber("FDistance", dDistance);
+	    	    		//SmartDashboard.putNumber("FDistance", dDistance);
 	    				addSequential (new DriveDistancePID(dDistance, dSpeed));
+	    				if (dDistance * dSpeed >= dMomentumThreshold) {
+	    					addSequential (new WaitForIt(dWaitDuration));
+	    				}
 	    				break;
 	    			case "reverse": 
 	    	    		dDistance = Double.valueOf(autoArray[i + 1]);
-	    	    		SmartDashboard.putNumber("RDistance", dDistance);
+	    	    		//SmartDashboard.putNumber("RDistance", dDistance);
 	    				addSequential (new DriveDistancePID(-dDistance, dSpeed));
+	    				if (dDistance >= 100) {
+	    					addSequential (new WaitForIt(dWaitDuration));
+	    				}
 	    				break;
+	    				
+	    			case "curveleft": 
+	    				dTimeOutVal = Double.valueOf(autoArray[i + 1]);
+	    				addSequential (new DriveCurve(-45, dSpeed, dTimeOutVal));	    		
+	    				break;
+	    				
+	    			case "curveright": 
+	    				dTimeOutVal = Double.valueOf(autoArray[i + 1]);
+	    				addSequential (new DriveCurve(45, dSpeed, dTimeOutVal));	    		
+	    				break;
+	    				
 	    			case "rotate":
 	    	    		dAngle = Integer.valueOf(autoArray[i + 1]);
-	    	    		SmartDashboard.putNumber("RAngle", dDistance);
-	    				addSequential (new GyroRotatePID(dAngle));
+	    	    		//SmartDashboard.putNumber("RAngle", dDistance);
+	    				addSequential (new GyroRotatePID(dAngle, dSpeed));
 	    				break;
 	    				
 	    			case "gearforward":
@@ -99,19 +118,21 @@ public class Autonomous extends CommandGroup {
 	    				break;
 	    			case "findandshoot":
 	    				dTimeOutVal = Double.valueOf(autoArray[i + 1]);
-	    				addSequential (new FindBoiler());
+	    				addSequential (new FindBoiler(dSpeed));
 	    				//addSequential (new BallShoot(dTimeOutVal));
 	    				break;
 	    			case "wait":
 	    				dWaitDuration = Double.valueOf(autoArray [i + 1]);
 	    				addSequential (new WaitForIt(dWaitDuration));
 	    				break;
+	    				
+	    				
 	    					    			
 	    			default:
-	    				SmartDashboard.putString("HI", "Default");
+	    				//SmartDashboard.putString("HI", "Default");
 	    				
 	    		}
-	    		SmartDashboard.putString("AutoCommandGroup", "looping" + i);
+	    		//SmartDashboard.putString("AutoCommandGroup", "looping" + i);
 	    	}
     	
     }

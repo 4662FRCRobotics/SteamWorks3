@@ -9,11 +9,14 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class FindBoiler extends Command {
 
-    public FindBoiler() {
+    private double m_dSpeed;
+
+	public FindBoiler(double speed) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.visionSystem);
     	requires(Robot.driveSystem);
+    	m_dSpeed = speed;
     }
 
     // Called just before this Command runs the first time
@@ -36,7 +39,7 @@ public class FindBoiler extends Command {
     // Called once after isFinished returns true
     protected void end() {
     	if (Robot.visionSystem.isTargetFound()) {
-    		Command commandGroup = (Command) new MoveToBoilerGroup();
+    		Command commandGroup = (Command) new MoveToBoilerGroup(m_dSpeed);
     		commandGroup.start();
     	}
     }

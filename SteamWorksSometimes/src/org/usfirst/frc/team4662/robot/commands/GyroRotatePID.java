@@ -10,18 +10,28 @@ import edu.wpi.first.wpilibj.command.Command;
 public class GyroRotatePID extends Command {
 
 	private double m_dAngle;
+	private double m_dSpeed;
 	
     public GyroRotatePID(double angle) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.driveSystem);
     	m_dAngle = angle;
+    	m_dSpeed = 0.6;
     }
 
+    public GyroRotatePID(double angle, double speed) {
+        // Use requires() here to declare subsystem dependencies
+        // eg. requires(chassis);
+    	requires(Robot.driveSystem);
+    	m_dAngle = angle;
+    	m_dSpeed = speed;
+    }
+    
     // Called just before this Command runs the first time
     protected void initialize() {
        
-    	Robot.driveSystem.turnToAngle(m_dAngle);
+    	Robot.driveSystem.turnToAngle(m_dAngle, m_dSpeed);
     }
 
     // Called repeatedly when this Command is scheduled to run
